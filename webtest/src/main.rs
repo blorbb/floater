@@ -1,6 +1,6 @@
 #![feature(try_blocks)]
 
-use floater::{compute_position, middleware::arrow, ElemRect, ElemSize, PositionOpts, Side, Vec2};
+use floater::{compute_position, ElemRect, ElemSize, PositionOpts, Side, Vec2, middleware::offset};
 use leptos::*;
 use leptos_mview::mview;
 use web_sys::{wasm_bindgen::JsCast, HtmlElement};
@@ -31,12 +31,10 @@ fn App() -> impl IntoView {
 
             let mut arrow_data = 1;
 
-            let Vec2 { x, y } = compute_position(
+            let (Vec2 { x, y }, data) = compute_position(
                 ref_rect,
                 tip_size,
-                PositionOpts::new()
-                    .side(Side::Top)
-                    .add_middleware(arrow(&mut arrow_data)),
+                PositionOpts::new().side(Side::Top).add_middleware(offset(3.0)), // .add_middleware(arrow()),
             );
             logging::log!("{x}, {y}");
 

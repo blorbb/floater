@@ -1,8 +1,8 @@
 pub mod middleware;
 
-use std::ops;
+use std::{any::Any, ops};
 
-use middleware::{Middleware, MiddlewareState, Middlewares};
+use middleware::{Middleware, MiddlewareData, MiddlewareState, Middlewares};
 
 #[derive(Debug)]
 pub struct Vec2 {
@@ -151,7 +151,7 @@ impl PositionOpts {
         self
     }
 
-    pub fn add_middleware(mut self, mw: impl Middleware + 'static) -> Self {
+    pub fn add_middleware(mut self, mw: impl Middleware<Extra = Box<dyn Any>>) -> Self {
         self.middleware.add(mw);
         self
     }
@@ -166,7 +166,11 @@ pub enum Side {
     Bottom,
 }
 
-pub fn compute_position(reference: ElemRect, tooltip: ElemSize, opts: PositionOpts) -> Vec2 {
+pub fn compute_position(
+    reference: ElemRect,
+    tooltip: ElemSize,
+    opts: PositionOpts,
+) -> (Vec2, MiddlewareData) {
     let x = match opts.side {
         Side::Top | Side::Bottom => reference.center().x - tooltip.width / 2.0,
         Side::Left => reference.left() - tooltip.width,
@@ -179,16 +183,19 @@ pub fn compute_position(reference: ElemRect, tooltip: ElemSize, opts: PositionOp
         Side::Bottom => reference.bottom(),
     };
 
-    let mut mid_state = MiddlewareState {
+    let mut mw_state = MiddlewareState {
         placement: opts.side,
         reference,
         tooltip,
         pos: Vec2::new(x, y),
     };
+    let mut mw_data = MiddlewareData::new();
 
-    for mut mw in opts.middleware {
-        mid_state.pos = mw.run(&mid_state);
+    for mw in opts.middleware {
+        let (pos, data) = mw.run(&mw_state);
+        mw_state.pos = pos;
+        mw_data.push(data);
     }
 
-    mid_state.pos
+    (mw_state.pos, mw_data)
 }
