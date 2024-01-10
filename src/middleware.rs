@@ -1,11 +1,11 @@
 use core::fmt;
 use std::vec;
 
-use crate::{ElemRect, ElemSize, Side, vec2::Vec2};
+use crate::{vec2::Vec2, ElemRect, ElemSize, Side};
 
 #[derive(Debug)]
 pub struct MiddlewareState {
-    pub placement: Side,
+    pub side: Side,
     pub reference: ElemRect,
     pub tooltip: ElemSize,
     pub pos: Vec2,
@@ -62,12 +62,14 @@ impl fmt::Debug for Middlewares<'_> {
 // actual middleware //
 
 pub fn offset(amount: f64) -> impl Middleware {
-    move |state: &MiddlewareState| Vec2::new(amount, amount)
-}
+    move |MiddlewareState { side, pos, .. }: &MiddlewareState| {
+        let (x, y) = match side {
+            Side::Left => (pos.x - amount, pos.y),
+            Side::Right => (pos.x + amount, pos.y),
+            Side::Top => (pos.x, pos.y - amount),
+            Side::Bottom => (pos.x, pos.y + amount),
+        };
 
-pub fn arrow(data: &mut i32) -> impl Middleware + '_ {
-    |state: &MiddlewareState| {
-        *data += 1;
-        Vec2::new(1.0, 1.0)
+        Vec2::new(x, y)
     }
 }

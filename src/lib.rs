@@ -2,7 +2,7 @@ pub mod middleware;
 pub mod vec2;
 
 use middleware::{Middleware, MiddlewareState, Middlewares};
-
+use vec2::Vec2;
 
 /// A rectangle placed on a viewport (scrolling context).
 ///
@@ -128,10 +128,10 @@ pub fn compute_position(reference: ElemRect, tooltip: ElemSize, opts: PositionOp
     };
 
     let mut mid_state = MiddlewareState {
-        placement: opts.side,
+        side: opts.side,
         reference,
         tooltip,
-        pos: vec2::Vec2::new(x, y),
+        pos: Vec2::new(x, y),
     };
 
     for mw in opts.middleware {
