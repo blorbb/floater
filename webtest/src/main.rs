@@ -1,7 +1,7 @@
 #![feature(try_blocks)]
 
 use floater::{
-    compute_position, middleware::offset, vec2::Vec2, ElemRect, ElemSize, PositionOpts, Side,
+    compute_position, modifiers::offset, vec2::Vec2, ElemRect, ElemSize, PositionOpts, Side,
 };
 use leptos::*;
 use leptos_mview::mview;
@@ -36,7 +36,7 @@ fn App() -> impl IntoView {
                 tip_size,
                 PositionOpts::new()
                     .side(Side::Top)
-                    .add_middleware(&mut offset(5.0)),
+                    .add_modifier(&mut offset(5.0)),
             );
             logging::log!("{x}, {y}");
 

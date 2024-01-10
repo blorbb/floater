@@ -1,7 +1,7 @@
-pub mod middleware;
+pub mod modifiers;
 pub mod vec2;
 
-use middleware::{Middleware, MiddlewareState, Middlewares};
+use modifiers::{Modifier, ModifierState, Modifiers};
 use vec2::Vec2;
 
 /// A rectangle placed on a viewport (scrolling context).
@@ -86,7 +86,7 @@ impl ElemSize {
 #[derive(Debug, Default)]
 pub struct PositionOpts<'a> {
     side: Side,
-    middleware: Middlewares<'a>,
+    modifiers: Modifiers<'a>,
 }
 
 impl<'a> PositionOpts<'a> {
@@ -99,8 +99,8 @@ impl<'a> PositionOpts<'a> {
         self
     }
 
-    pub fn add_middleware(mut self, mw: &'a mut impl Middleware) -> Self {
-        self.middleware.add(mw);
+    pub fn add_modifier(mut self, modifier: &'a mut impl Modifier) -> Self {
+        self.modifiers.push(modifier);
         self
     }
 }
@@ -114,28 +114,28 @@ pub enum Side {
     Bottom,
 }
 
-pub fn compute_position(reference: ElemRect, tooltip: ElemSize, opts: PositionOpts) -> vec2::Vec2 {
+pub fn compute_position(reference: ElemRect, floater: ElemSize, opts: PositionOpts) -> vec2::Vec2 {
     let x = match opts.side {
-        Side::Top | Side::Bottom => reference.center().x - tooltip.width / 2.0,
-        Side::Left => reference.left() - tooltip.width,
+        Side::Top | Side::Bottom => reference.center().x - floater.width / 2.0,
+        Side::Left => reference.left() - floater.width,
         Side::Right => reference.right(),
     };
 
     let y = match opts.side {
-        Side::Left | Side::Right => reference.center().y - tooltip.height / 2.0,
-        Side::Top => reference.top() - tooltip.height,
+        Side::Left | Side::Right => reference.center().y - floater.height / 2.0,
+        Side::Top => reference.top() - floater.height,
         Side::Bottom => reference.bottom(),
     };
 
-    let mut mid_state = MiddlewareState {
+    let mut mid_state = ModifierState {
         side: opts.side,
         reference,
-        tooltip,
+        floater,
         pos: Vec2::new(x, y),
     };
 
-    for mw in opts.middleware {
-        mid_state.pos = mw.run(&mid_state);
+    for modifier in opts.modifiers {
+        mid_state.pos = modifier.run(&mid_state);
     }
 
     mid_state.pos

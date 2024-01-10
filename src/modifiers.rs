@@ -4,47 +4,46 @@ use std::vec;
 use crate::{vec2::Vec2, ElemRect, ElemSize, Side};
 
 #[derive(Debug)]
-pub struct MiddlewareState {
+pub struct ModifierState {
     pub side: Side,
     pub reference: ElemRect,
-    pub tooltip: ElemSize,
+    pub floater: ElemSize,
     pub pos: Vec2,
 }
 
-pub trait Middleware {
-    fn run(&mut self, state: &MiddlewareState) -> Vec2;
+pub trait Modifier {
+    fn run(&mut self, state: &ModifierState) -> Vec2;
 }
 
-impl<F> Middleware for F
+impl<F> Modifier for F
 where
-    F: FnMut(&MiddlewareState) -> Vec2,
+    F: FnMut(&ModifierState) -> Vec2,
 {
-    fn run(&mut self, state: &MiddlewareState) -> Vec2 {
+    fn run(&mut self, state: &ModifierState) -> Vec2 {
         self(state)
     }
 }
 
-pub struct Middlewares<'a>(Vec<&'a mut dyn Middleware>);
+pub struct Modifiers<'a>(Vec<&'a mut dyn Modifier>);
 
-impl<'a> Middlewares<'a> {
+impl<'a> Modifiers<'a> {
     pub fn new() -> Self {
         Self(Vec::new())
     }
 
-    pub fn add(&mut self, mw: &'a mut impl Middleware) -> &mut Self {
-        self.0.push(mw);
-        self
+    pub fn push(&mut self, modifier: &'a mut impl Modifier) {
+        self.0.push(modifier)
     }
 }
 
-impl Default for Middlewares<'_> {
+impl Default for Modifiers<'_> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> IntoIterator for Middlewares<'a> {
-    type Item = &'a mut dyn Middleware;
+impl<'a> IntoIterator for Modifiers<'a> {
+    type Item = &'a mut dyn Modifier;
 
     type IntoIter = vec::IntoIter<Self::Item>;
 
@@ -53,16 +52,16 @@ impl<'a> IntoIterator for Middlewares<'a> {
     }
 }
 
-impl fmt::Debug for Middlewares<'_> {
+impl fmt::Debug for Modifiers<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_tuple("Middlewares").finish()
+        f.debug_tuple("Modifiers").finish()
     }
 }
 
-// actual middleware //
+// actual modifiers //
 
-pub fn offset(amount: f64) -> impl Middleware {
-    move |MiddlewareState { side, pos, .. }: &MiddlewareState| {
+pub fn offset(amount: f64) -> impl Modifier {
+    move |ModifierState { side, pos, .. }: &ModifierState| {
         let (x, y) = match side {
             Side::Left => (pos.x - amount, pos.y),
             Side::Right => (pos.x + amount, pos.y),
