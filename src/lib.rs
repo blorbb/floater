@@ -1,4 +1,8 @@
+pub mod middleware;
+
 use std::ops;
+
+use middleware::{Middleware, MiddlewareState, Middlewares};
 
 #[derive(Debug)]
 pub struct Vec2 {
@@ -131,9 +135,26 @@ impl ElemSize {
     }
 }
 
-#[derive(Debug)]
-pub struct PositionOpts {
-    pub side: Side,
+#[derive(Debug, Default)]
+pub struct PositionOpts<'a> {
+    side: Side,
+    middleware: Middlewares<'a>,
+}
+
+impl<'a> PositionOpts<'a> {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn side(mut self, side: Side) -> Self {
+        self.side = side;
+        self
+    }
+
+    pub fn add_middleware(mut self, mw: &'a mut impl Middleware) -> Self {
+        self.middleware.add(mw);
+        self
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -158,5 +179,16 @@ pub fn compute_position(reference: ElemRect, tooltip: ElemSize, opts: PositionOp
         Side::Bottom => reference.bottom(),
     };
 
-    Vec2::new(x, y)
+    let mut mid_state = MiddlewareState {
+        placement: opts.side,
+        reference,
+        tooltip,
+        pos: Vec2::new(x, y),
+    };
+
+    for mw in opts.middleware {
+        mid_state.pos = mw.run(&mid_state);
+    }
+
+    mid_state.pos
 }

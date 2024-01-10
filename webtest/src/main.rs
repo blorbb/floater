@@ -1,9 +1,9 @@
 #![feature(try_blocks)]
 
-use floater::{compute_position, ElemRect, ElemSize, PositionOpts, Side, Vec2};
+use floater::{compute_position, middleware::arrow, ElemRect, ElemSize, PositionOpts, Side, Vec2};
 use leptos::*;
 use leptos_mview::mview;
-use web_sys::{HtmlElement, wasm_bindgen::JsCast};
+use web_sys::{wasm_bindgen::JsCast, HtmlElement};
 
 fn main() {
     mount_to_body(App)
@@ -29,8 +29,15 @@ fn App() -> impl IntoView {
             logging::log!("{ref_rect:?}");
             logging::log!("{tip_size:?}");
 
-            let Vec2 { x, y } =
-                compute_position(ref_rect, tip_size, PositionOpts { side: Side::Right });
+            let mut arrow_data = 1;
+
+            let Vec2 { x, y } = compute_position(
+                ref_rect,
+                tip_size,
+                PositionOpts::new()
+                    .side(Side::Top)
+                    .add_middleware(&mut arrow(&mut arrow_data)),
+            );
             logging::log!("{x}, {y}");
 
             let tip_styles = tooltip.get()?.dyn_ref::<HtmlElement>()?.style();
