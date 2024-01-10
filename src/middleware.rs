@@ -1,5 +1,5 @@
 use core::fmt;
-use std::{vec, any::Any};
+use std::vec;
 
 use crate::{ElemRect, ElemSize, Side, Vec2};
 
@@ -11,32 +11,40 @@ pub struct MiddlewareState {
     pub pos: Vec2,
 }
 
-pub trait Middleware: 'static {
-    type Extra;
-    fn run(&self, state: &MiddlewareState) -> (Vec2, Self::Extra);
+pub trait Middleware {
+    fn run(&mut self, state: &MiddlewareState) -> Vec2;
 }
 
-pub struct Middlewares(Vec<Box<dyn Middleware<Extra = Box<dyn Any>>>>);
+impl<F> Middleware for F
+where
+    F: FnMut(&MiddlewareState) -> Vec2,
+{
+    fn run(&mut self, state: &MiddlewareState) -> Vec2 {
+        self(state)
+    }
+}
 
-impl Middlewares {
+pub struct Middlewares<'a>(Vec<&'a mut dyn Middleware>);
+
+impl<'a> Middlewares<'a> {
     pub fn new() -> Self {
         Self(Vec::new())
     }
 
-    pub fn add(&mut self, mw: impl Middleware<Extra = Box<dyn Any>>) -> &mut Self {
-        self.0.push(Box::new(mw));
+    pub fn add(&mut self, mw: &'a mut impl Middleware) -> &mut Self {
+        self.0.push(mw);
         self
     }
 }
 
-impl Default for Middlewares {
+impl Default for Middlewares<'_> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> IntoIterator for Middlewares {
-    type Item = Box<dyn Middleware<Extra = Box<dyn Any>>>;
+impl<'a> IntoIterator for Middlewares<'a> {
+    type Item = &'a mut dyn Middleware;
 
     type IntoIter = vec::IntoIter<Self::Item>;
 
@@ -45,61 +53,19 @@ impl<'a> IntoIterator for Middlewares {
     }
 }
 
-impl fmt::Debug for Middlewares {
+impl fmt::Debug for Middlewares<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_tuple("Middlewares").finish()
     }
 }
 
-pub struct MiddlewareData(Vec<Box<dyn Any>>);
-
-impl MiddlewareData {
-    pub fn new() -> Self {
-        Self(Vec::new())
-    }
-
-    pub fn push(&mut self, data: Box<dyn Any>) {
-        self.0.push(data)
-    }
-
-    pub fn fetch<T: Middleware>(&mut self) -> Option<T::Extra> {
-        for i in 0..self.0.len() {
-            if self.0[i].downcast_ref::<T::Extra>().is_some() {
-                return Some(*self.0.remove(i).downcast().unwrap())
-            }
-        }
-
-        None
-    }
+pub fn offset(amount: f64) -> impl Middleware {
+    move |state: &MiddlewareState| Vec2::new(amount, amount)
 }
 
-pub struct Offset(f64);
-
-impl Middleware for Offset {
-    type Extra = ();
-
-    fn run(&self, state: &MiddlewareState) -> (Vec2, Self::Extra) {
-        (Vec2::new(self.0, self.0), ())
+pub fn arrow(data: &mut i32) -> impl Middleware + '_ {
+    |state: &MiddlewareState| {
+        *data += 1;
+        Vec2::new(1.0, 1.0)
     }
 }
-
-pub fn offset(amount: f64) -> impl Middleware<Extra = ()> {
-    Offset(amount)
-}
-
-pub struct Arrow;
-
-impl Middleware for Arrow {
-    type Extra = Vec2;
-
-    fn run(&self, state: &MiddlewareState) -> (Vec2, Self::Extra) {
-        (Vec2::new(1.0, 2.0), Vec2::new(10000.0, 10000000.0))
-    }
-}
-
-// pub fn arrow() -> impl Middleware<Extra = Vec2> {
-//     |state: &MiddlewareState| {
-//         *data += 1;
-//         Vec2::new(1.0, 1.0)
-//     }
-// }
