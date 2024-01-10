@@ -136,12 +136,12 @@ impl ElemSize {
 }
 
 #[derive(Debug, Default)]
-pub struct PositionOpts<'a> {
+pub struct PositionOpts {
     side: Side,
-    middleware: Middlewares<'a>,
+    middleware: Middlewares,
 }
 
-impl<'a> PositionOpts<'a> {
+impl PositionOpts {
     pub fn new() -> Self {
         Self::default()
     }
@@ -151,7 +151,7 @@ impl<'a> PositionOpts<'a> {
         self
     }
 
-    pub fn add_middleware(mut self, mw: &'a mut impl Middleware) -> Self {
+    pub fn add_middleware(mut self, mw: impl Middleware + 'static) -> Self {
         self.middleware.add(mw);
         self
     }
@@ -186,7 +186,7 @@ pub fn compute_position(reference: ElemRect, tooltip: ElemSize, opts: PositionOp
         pos: Vec2::new(x, y),
     };
 
-    for mw in opts.middleware {
+    for mut mw in opts.middleware {
         mid_state.pos = mw.run(&mid_state);
     }
 

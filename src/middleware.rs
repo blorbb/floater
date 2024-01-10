@@ -24,27 +24,27 @@ where
     }
 }
 
-pub struct Middlewares<'a>(Vec<&'a mut dyn Middleware>);
+pub struct Middlewares(Vec<Box<dyn Middleware>>);
 
-impl<'a> Middlewares<'a> {
+impl Middlewares {
     pub fn new() -> Self {
         Self(Vec::new())
     }
 
-    pub fn add(&mut self, mw: &'a mut impl Middleware) -> &mut Self {
-        self.0.push(mw);
+    pub fn add(&mut self, mw: impl Middleware + 'static) -> &mut Self {
+        self.0.push(Box::new(mw));
         self
     }
 }
 
-impl Default for Middlewares<'_> {
+impl Default for Middlewares {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> IntoIterator for Middlewares<'a> {
-    type Item = &'a mut dyn Middleware;
+impl IntoIterator for Middlewares {
+    type Item = Box<dyn Middleware>;
 
     type IntoIter = vec::IntoIter<Self::Item>;
 
@@ -53,7 +53,7 @@ impl<'a> IntoIterator for Middlewares<'a> {
     }
 }
 
-impl fmt::Debug for Middlewares<'_> {
+impl fmt::Debug for Middlewares {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_tuple("Middlewares").finish()
     }

@@ -36,7 +36,7 @@ fn App() -> impl IntoView {
                 tip_size,
                 PositionOpts::new()
                     .side(Side::Top)
-                    .add_middleware(&mut arrow(&mut arrow_data)),
+                    .add_middleware(arrow(&mut arrow_data)),
             );
             logging::log!("{x}, {y}");
 
