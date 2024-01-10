@@ -1,7 +1,7 @@
 use core::fmt;
 use std::vec;
 
-use crate::{ElemRect, ElemSize, Side, Vec2};
+use crate::{ElemRect, ElemSize, Side, vec2::Vec2};
 
 #[derive(Debug)]
 pub struct MiddlewareState {
@@ -58,6 +58,8 @@ impl fmt::Debug for Middlewares<'_> {
         f.debug_tuple("Middlewares").finish()
     }
 }
+
+// actual middleware //
 
 pub fn offset(amount: f64) -> impl Middleware {
     move |state: &MiddlewareState| Vec2::new(amount, amount)

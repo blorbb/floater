@@ -1,6 +1,6 @@
 #![feature(try_blocks)]
 
-use floater::{compute_position, middleware::arrow, ElemRect, ElemSize, PositionOpts, Side, Vec2};
+use floater::{compute_position, middleware::arrow, ElemRect, ElemSize, PositionOpts, Side, vec2::Vec2};
 use leptos::*;
 use leptos_mview::mview;
 use web_sys::{wasm_bindgen::JsCast, HtmlElement};
