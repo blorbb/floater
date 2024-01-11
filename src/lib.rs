@@ -35,7 +35,15 @@ pub enum Side {
     Bottom,
 }
 
-pub fn compute_position(reference: ElemRect, floater: ElemSize, opts: PositionOpts) -> ElemRect {
+/// All positions should be relative to the viewport.
+///
+/// `container` will usually be the whole viewport.
+pub fn compute_position(
+    reference: ElemRect,
+    floater: ElemSize,
+    container: ElemRect,
+    opts: PositionOpts,
+) -> ElemRect {
     let x = match opts.side {
         Side::Top | Side::Bottom => reference.center().x - floater.width() / 2.0,
         Side::Left => reference.left() - floater.width(),
@@ -51,6 +59,7 @@ pub fn compute_position(reference: ElemRect, floater: ElemSize, opts: PositionOp
     let mut state = ModifierState::new(
         reference,
         ElemRect::new(x, y, floater.width(), floater.height()),
+        container,
         opts.side,
     );
 

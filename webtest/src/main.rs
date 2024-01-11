@@ -21,6 +21,7 @@ fn App() -> impl IntoView {
         let _: Option<_> = try {
             let ref_rect = reference.get()?.get_bounding_client_rect();
             let tip_rect = tooltip.get()?.get_bounding_client_rect();
+            let viewport = document().document_element()?.get_bounding_client_rect();
 
             let ref_rect = ElemRect::new(
                 ref_rect.x(),
@@ -29,12 +30,14 @@ fn App() -> impl IntoView {
                 ref_rect.height(),
             );
             let tip_size = ElemSize::new(tip_rect.width(), tip_rect.height());
+            let viewport = ElemRect::new(0.0, 0.0, viewport.width(), viewport.height());
             logging::log!("{ref_rect:?}");
             logging::log!("{tip_size:?}");
 
             let (x, y) = compute_position(
                 ref_rect,
                 tip_size,
+                viewport,
                 PositionOpts::new()
                     .with_side(Side::Bottom)
                     .add_modifier(&mut offset(5.0)),

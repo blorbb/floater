@@ -8,27 +8,30 @@ use crate::{geometry::ElemRect, Side};
 
 /// Allows each modifier to read position data.
 ///
-/// Modifiers should mutate `floater` and `side` where required. `reference` is
-/// read-only.
+/// Modifiers should mutate `floater` and `side` where required. All other
+/// fields are read-only.
 #[derive(Debug)]
 pub struct ModifierState {
     reference: ElemRect,
     // after initial placement, floater has a position too
     floater: ElemRect,
+    container: ElemRect,
     side: Side,
 }
 
 impl ModifierState {
-    pub fn new(reference: ElemRect, floater: ElemRect, side: Side) -> Self {
+    pub fn new(reference: ElemRect, floater: ElemRect, container: ElemRect, side: Side) -> Self {
         Self {
             reference,
             floater,
+            container,
             side,
         }
     }
 
     pub fn reference(&self) -> &ElemRect { &self.reference }
     pub fn floater(&self) -> &ElemRect { &self.floater }
+    pub fn container(&self) -> &ElemRect { &self.container }
     pub fn side(&self) -> Side { self.side }
 
     pub fn floater_mut(&mut self) -> &mut ElemRect { &mut self.floater }
