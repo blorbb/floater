@@ -23,16 +23,19 @@ impl ElemRect {
     pub fn width(&self) -> f64 { self.size.width() }
     pub fn height(&self) -> f64 { self.size.height() }
 
+    pub fn left(&self) -> f64 { self.x() }
+    pub fn right(&self) -> f64 { self.x() + self.width() }
+    pub fn top(&self) -> f64 { self.y() }
+    pub fn bottom(&self) -> f64 { self.y() + self.height() }
+
     pub fn xy(&self) -> (f64, f64) { (self.x(), self.y()) }
     pub fn point(&self) -> Vec2 { self.point }
 
     pub fn set_point(&mut self, point: Vec2) { self.point = point; }
     pub fn set_size(&mut self, size: ElemSize) { self.size = size; }
 
-    pub fn left(&self) -> f64 { self.x() }
-    pub fn right(&self) -> f64 { self.x() + self.width() }
-    pub fn top(&self) -> f64 { self.y() }
-    pub fn bottom(&self) -> f64 { self.y() + self.height() }
+    pub fn x_mut(&mut self) -> &mut f64 { &mut self.point.x }
+    pub fn y_mut(&mut self) -> &mut f64 { &mut self.point.y }
 
     pub fn center(&self) -> Vec2 {
         Vec2::new(

@@ -2,9 +2,9 @@
 
 use floater::{
     compute_position,
-    geometry::{ElemRect, ElemSize},
-    modifiers::offset,
-    PositionOpts, Side,
+    geometry::{ElemRect, ElemSize, Side},
+    modifiers::{flip, offset},
+    PositionOpts,
 };
 use leptos::*;
 use leptos_mview::mview;
@@ -88,7 +88,8 @@ fn Single() -> impl IntoView {
                 container,
                 PositionOpts::new()
                     .with_side(Side::Bottom)
-                    .add_modifier(&mut offset(5.0)),
+                    .add_modifier(&mut offset(5.0))
+                    .add_modifier(&mut flip().with_padding(10.0)),
             )
             .xy();
             logging::log!("{x}, {y}");

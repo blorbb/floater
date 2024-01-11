@@ -6,7 +6,7 @@ pub mod web;
 
 use std::mem;
 
-use geometry::{ElemRect, ElemSize};
+use geometry::{ElemRect, ElemSize, Side};
 use modifiers::{Modifier, ModifierState, Modifiers};
 
 #[derive(Debug, Default)]
@@ -29,14 +29,6 @@ impl<'a> PositionOpts<'a> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
-pub enum Side {
-    Left,
-    Top,
-    Right,
-    #[default]
-    Bottom,
-}
 
 /// `reference` should be relative to the nearest scrolling context.
 ///

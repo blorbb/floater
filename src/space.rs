@@ -23,9 +23,9 @@ impl SpaceAround {
 
 pub fn space_around(rect: &ElemRect, container: &ElemRect) -> SpaceAround {
     SpaceAround {
-        left: container.left() - rect.left(),
-        top: container.top() - rect.top(),
-        right: rect.right() - container.right(),
-        bottom: rect.bottom() - container.bottom(),
+        left: rect.left() - container.left(),
+        top: rect.top() - container.top(),
+        right: container.right() - rect.right(),
+        bottom: container.bottom() - rect.bottom(),
     }
 }

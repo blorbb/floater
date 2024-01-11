@@ -1,5 +1,5 @@
 use super::{Modifier, ModifierState};
-use crate::{geometry::Vec2, Side};
+use crate::geometry::{Side, Vec2};
 
 pub fn offset(amount: f64) -> impl Modifier {
     move |state: &mut ModifierState| {

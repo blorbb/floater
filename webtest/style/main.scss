@@ -2,6 +2,10 @@
     box-sizing: border-box;
 }
 
+p {
+    margin-block: 20rem;
+}
+
 .tooltip {
     position: absolute;
     width: max-content;
@@ -11,7 +15,7 @@
 }
 
 .padding-elem {
-    height: 200rem;
+    height: 20rem;
     background-color: aliceblue;
 }
 
