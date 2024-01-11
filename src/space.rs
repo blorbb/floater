@@ -19,6 +19,8 @@ impl SpaceAround {
             Side::Bottom => self.bottom,
         }
     }
+
+    pub fn min(&self) -> f64 { self.left.min(self.top).min(self.right).min(self.bottom) }
 }
 
 pub fn space_around(rect: &ElemRect, container: &ElemRect) -> SpaceAround {

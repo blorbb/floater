@@ -1,6 +1,9 @@
 use super::{Modifier, ModifierState};
 use crate::{geometry::Side, space::space_around};
 
+// TODO: option for shifting perpendicular to the side, use with the limiter
+// so that it only shifts away from
+
 pub fn shift() -> Shift { Shift { padding: 0.0 } }
 
 pub struct Shift {

@@ -1,6 +1,16 @@
 use super::{Modifier, ModifierState};
 use crate::{geometry::Side, space::space_around};
 
+// TODO: flip to side, option to flip to most space as fallback
+
+pub fn flip() -> Flip {
+    Flip {
+        flip_across: true,
+        flip_to_side: false,
+        padding: 0.0,
+    }
+}
+
 pub struct Flip {
     flip_across: bool,
     flip_to_side: bool,
@@ -41,13 +51,21 @@ impl Modifier for Flip {
             *state.side_mut() = initial_side;
         };
 
+        let space = space_around(state.floater(), &container);
         // has enough space, no need to flip
-        if space_around(state.floater(), &container).on_side(state.side()) > self.padding {
+        if space.min() > self.padding {
             return;
         }
 
         // try flip across
-        if self.flip_across {
+        // also check that the flip requirement wasn't because of no space *parallel*
+        // to the side: would require a flip to an adjacent side
+        if self.flip_across
+            && initial_side
+                .adjacents()
+                .into_iter()
+                .all(|side| space.on_side(side) > self.padding)
+        {
             /// Next number with the same difference betweeen middle and first.
             fn next_equal_diff(first: f64, middle: f64) -> f64 {
                 let diff = middle - first;
@@ -86,13 +104,5 @@ impl Modifier for Flip {
         if self.flip_to_side {
             todo!()
         }
-    }
-}
-
-pub fn flip() -> Flip {
-    Flip {
-        flip_across: true,
-        flip_to_side: true,
-        padding: 0.0,
     }
 }
