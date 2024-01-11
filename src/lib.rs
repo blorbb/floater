@@ -1,5 +1,6 @@
 pub mod geometry;
 pub mod modifiers;
+#[cfg(feature = "web-utils")] pub mod web;
 
 use std::mem;
 

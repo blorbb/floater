@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies]
 leptos = { version = "0.5.4", features = ["nightly", "csr"] }
 leptos-mview = "0.2.1"
-floater = { path = ".." }
+floater = { path = "..", features = ["web-utils"] }
 web-sys = { version = "0.3", features = ["DomRect", "CssStyleDeclaration"] }

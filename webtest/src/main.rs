@@ -23,14 +23,9 @@ fn App() -> impl IntoView {
             let tip_rect = tooltip.get()?.get_bounding_client_rect();
             let viewport = document().document_element()?.get_bounding_client_rect();
 
-            let ref_rect = ElemRect::new(
-                ref_rect.x(),
-                ref_rect.y(),
-                ref_rect.width(),
-                ref_rect.height(),
-            );
+            let ref_rect = ElemRect::from(ref_rect);
             let tip_size = ElemSize::new(tip_rect.width(), tip_rect.height());
-            let viewport = ElemRect::new(0.0, 0.0, viewport.width(), viewport.height());
+            let viewport = ElemRect::from(viewport);
             logging::log!("{ref_rect:?}");
             logging::log!("{tip_size:?}");
 
