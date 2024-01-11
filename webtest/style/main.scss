@@ -1,7 +1,25 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 .tooltip {
     position: absolute;
     width: max-content;
     top: 0;
     left: 0;
     background-color: grey;
+}
+
+.padding-elem {
+    height: 200rem;
+    background-color: aliceblue;
+}
+
+.scrolling {
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+    position: relative;
+    overflow: auto;
+    margin-inline: auto;
 }

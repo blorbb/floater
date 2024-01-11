@@ -4,7 +4,7 @@ use super::{size::ElemSize, Vec2};
 ///
 /// Positive `x` goes right, positive `y` goes down. Width and height must be
 /// non-negative.
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct ElemRect {
     point: Vec2,
     size: ElemSize,
@@ -40,4 +40,13 @@ impl ElemRect {
             self.y() + self.height() / 2.0,
         )
     }
+
+    // pub fn intersect(&self, other: &Self) -> Self {
+    //     let left = self.x().max(other.x());
+    //     let top = self.y().max(other.y());
+    //     let right = self.right().min(other.right());
+    //     let bottom = self.bottom().min(other.bottom());
+
+    //     Self::new(left, top, right - left, bottom - top)
+    // }
 }

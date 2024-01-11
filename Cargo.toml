@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies.web-sys]
 version = "0.3"
 optional = true
-features = ["DomRect", "CssStyleDeclaration"]
+features = ["DomRect", "CssStyleDeclaration", "HtmlElement", "Element"]
 
 [features]
 web-utils = ["dep:web-sys"]

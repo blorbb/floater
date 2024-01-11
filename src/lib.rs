@@ -1,6 +1,7 @@
 pub mod geometry;
 pub mod modifiers;
-#[cfg(feature = "web-utils")] pub mod web;
+#[cfg(feature = "web-utils")]
+pub mod web;
 
 use std::mem;
 
@@ -36,9 +37,11 @@ pub enum Side {
     Bottom,
 }
 
-/// All positions should be relative to the viewport.
+/// `reference` should be relative to the nearest scrolling context.
 ///
-/// `container` will usually be the whole viewport.
+/// The returned position will also be relative to the same context.
+///
+/// `container` is the section of the scrolling context that is visible.
 pub fn compute_position(
     reference: ElemRect,
     floater: ElemSize,

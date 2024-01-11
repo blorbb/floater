@@ -1,6 +1,6 @@
 use super::Vec2;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct ElemSize(Vec2);
 
 impl ElemSize {
