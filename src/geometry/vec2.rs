@@ -1,5 +1,7 @@
 use std::ops;
 
+use super::Side;
+
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Vec2 {
     pub x: f64,
@@ -8,6 +10,28 @@ pub struct Vec2 {
 
 impl Vec2 {
     pub fn new(x: f64, y: f64) -> Self { Self { x, y } }
+
+    /// Returns the component of the coordinate that is in the direction along
+    /// the provided side.
+    ///
+    /// left/right => y, top/bottom => x.
+    pub fn coord_along(&mut self, side: Side) -> &mut f64 {
+        match side {
+            Side::Left | Side::Right => &mut self.y,
+            Side::Top | Side::Bottom => &mut self.x,
+        }
+    }
+
+    /// Returns the component of the coordinate that is in the direction
+    /// perpendicular to the provided side.
+    ///
+    /// left/right => x, top/bottom => y.
+    pub fn coord_across(&mut self, side: Side) -> &mut f64 {
+        match side {
+            Side::Left | Side::Right => &mut self.x,
+            Side::Top | Side::Bottom => &mut self.y,
+        }
+    }
 }
 
 impl ops::Neg for Vec2 {

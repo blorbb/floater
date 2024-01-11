@@ -11,6 +11,6 @@ pub fn offset(amount: f64) -> impl Modifier {
             Side::Bottom => (pos.x(), pos.y() + amount),
         };
 
-        state.floater_mut().set_point(Vec2::new(x, y))
+        *state.floater_mut().point_mut() = Vec2::new(x, y)
     }
 }

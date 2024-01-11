@@ -29,7 +29,6 @@ impl<'a> PositionOpts<'a> {
     }
 }
 
-
 /// `reference` should be relative to the nearest scrolling context.
 ///
 /// The returned position will also be relative to the same context.

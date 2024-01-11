@@ -31,8 +31,8 @@ impl ElemRect {
     pub fn xy(&self) -> (f64, f64) { (self.x(), self.y()) }
     pub fn point(&self) -> Vec2 { self.point }
 
-    pub fn set_point(&mut self, point: Vec2) { self.point = point; }
-    pub fn set_size(&mut self, size: ElemSize) { self.size = size; }
+    pub fn point_mut(&mut self) -> &mut Vec2 { &mut self.point }
+    pub fn set_size(&mut self) -> &mut ElemSize { &mut self.size }
 
     pub fn x_mut(&mut self) -> &mut f64 { &mut self.point.x }
     pub fn y_mut(&mut self) -> &mut f64 { &mut self.point.y }

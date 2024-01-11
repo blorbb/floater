@@ -2,8 +2,13 @@
     box-sizing: border-box;
 }
 
+// ::-webkit-scrollbar {
+//     width: 0px;
+//     height: 0px;
+// }
+
 p {
-    margin-block: 20rem;
+    margin: 4rem 10rem;
 }
 
 .tooltip {

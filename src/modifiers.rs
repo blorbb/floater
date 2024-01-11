@@ -1,7 +1,9 @@
-#[rustfmt::skip] mod offset;
+#[rustfmt::skip] pub mod offset;
 #[rustfmt::skip] pub use offset::offset;
-#[rustfmt::skip] mod flip;
+#[rustfmt::skip] pub mod flip;
 #[rustfmt::skip] pub use flip::flip;
+#[rustfmt::skip] pub mod shift;
+#[rustfmt::skip] pub use shift::shift;
 
 use core::fmt;
 use std::vec;
