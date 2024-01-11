@@ -1,5 +1,5 @@
-mod offset;
-pub use offset::offset;
+#[rustfmt::skip] mod offset;
+#[rustfmt::skip] pub use offset::offset;
 
 use core::fmt;
 use std::vec;
@@ -27,25 +27,12 @@ impl ModifierState {
         }
     }
 
-    pub fn reference(&self) -> &ElemRect {
-        &self.reference
-    }
+    pub fn reference(&self) -> &ElemRect { &self.reference }
+    pub fn floater(&self) -> &ElemRect { &self.floater }
+    pub fn side(&self) -> Side { self.side }
 
-    pub fn floater(&self) -> &ElemRect {
-        &self.floater
-    }
-
-    pub fn floater_mut(&mut self) -> &mut ElemRect {
-        &mut self.floater
-    }
-
-    pub fn side(&self) -> Side {
-        self.side
-    }
-
-    pub fn side_mut(&mut self) -> &mut Side {
-        &mut self.side
-    }
+    pub fn floater_mut(&mut self) -> &mut ElemRect { &mut self.floater }
+    pub fn side_mut(&mut self) -> &mut Side { &mut self.side }
 }
 
 pub trait Modifier {
@@ -56,27 +43,19 @@ impl<F> Modifier for F
 where
     F: FnMut(&mut ModifierState),
 {
-    fn run(&mut self, state: &mut ModifierState) {
-        self(state)
-    }
+    fn run(&mut self, state: &mut ModifierState) { self(state) }
 }
 
 pub struct Modifiers<'a>(Vec<&'a mut dyn Modifier>);
 
 impl<'a> Modifiers<'a> {
-    pub fn new() -> Self {
-        Self(Vec::new())
-    }
+    pub fn new() -> Self { Self(Vec::new()) }
 
-    pub fn push(&mut self, modifier: &'a mut impl Modifier) {
-        self.0.push(modifier)
-    }
+    pub fn push(&mut self, modifier: &'a mut impl Modifier) { self.0.push(modifier) }
 }
 
 impl Default for Modifiers<'_> {
-    fn default() -> Self {
-        Self::new()
-    }
+    fn default() -> Self { Self::new() }
 }
 
 impl<'a> IntoIterator for Modifiers<'a> {
@@ -84,13 +63,9 @@ impl<'a> IntoIterator for Modifiers<'a> {
 
     type IntoIter = vec::IntoIter<Self::Item>;
 
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_iter()
-    }
+    fn into_iter(self) -> Self::IntoIter { self.0.into_iter() }
 }
 
 impl fmt::Debug for Modifiers<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_tuple("Modifiers").finish()
-    }
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result { f.debug_tuple("Modifiers").finish() }
 }

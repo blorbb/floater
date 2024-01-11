@@ -13,9 +13,7 @@ pub struct PositionOpts<'a> {
 }
 
 impl<'a> PositionOpts<'a> {
-    pub fn new() -> Self {
-        Self::default()
-    }
+    pub fn new() -> Self { Self::default() }
 
     pub fn with_side(mut self, side: Side) -> Self {
         self.side = side;

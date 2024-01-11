@@ -10,9 +10,7 @@ use leptos::*;
 use leptos_mview::mview;
 use web_sys::{wasm_bindgen::JsCast, HtmlElement};
 
-fn main() {
-    mount_to_body(App)
-}
+fn main() { mount_to_body(App) }
 
 #[component]
 fn App() -> impl IntoView {
