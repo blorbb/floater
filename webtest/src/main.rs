@@ -8,7 +8,6 @@ use floater::{
 };
 use leptos::*;
 use leptos_mview::mview;
-use web_sys::{wasm_bindgen::JsCast, HtmlElement};
 
 fn main() { mount_to_body(App) }
 
@@ -40,7 +39,7 @@ fn App() -> impl IntoView {
             .xy();
             logging::log!("{x}, {y}");
 
-            let tip_styles = tooltip.get()?.dyn_ref::<HtmlElement>()?.style();
+            let tip_styles = tooltip.get().as_deref()?.style();
             tip_styles.set_property("top", &format!("{y}px")).ok()?;
             tip_styles.set_property("left", &format!("{x}px")).ok()?;
         };
