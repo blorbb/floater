@@ -1,8 +1,6 @@
 #![feature(try_blocks)]
 
-use floater::{
-    compute_position, modifiers::offset, vec2::Vec2, ElemRect, ElemSize, PositionOpts, Side,
-};
+use floater::{compute_position, modifiers::offset, ElemRect, ElemSize, PositionOpts, Side};
 use leptos::*;
 use leptos_mview::mview;
 use web_sys::{wasm_bindgen::JsCast, HtmlElement};
@@ -31,13 +29,14 @@ fn App() -> impl IntoView {
             logging::log!("{ref_rect:?}");
             logging::log!("{tip_size:?}");
 
-            let Vec2 { x, y } = compute_position(
+            let (x, y) = compute_position(
                 ref_rect,
                 tip_size,
                 PositionOpts::new()
-                    .side(Side::Top)
+                    .with_side(Side::Bottom)
                     .add_modifier(&mut offset(5.0)),
-            );
+            )
+            .xy();
             logging::log!("{x}, {y}");
 
             let tip_styles = tooltip.get()?.dyn_ref::<HtmlElement>()?.style();

@@ -1,25 +1,59 @@
 use core::fmt;
 use std::vec;
 
-use crate::{vec2::Vec2, ElemRect, ElemSize, Side};
+use crate::{vec2::Vec2, ElemRect, Side};
 
+/// Allows each modifier to read position data.
+///
+/// Modifiers should mutate `floater` and `side` where required. `reference` is
+/// read-only.
 #[derive(Debug)]
 pub struct ModifierState {
-    pub side: Side,
-    pub reference: ElemRect,
-    pub floater: ElemSize,
-    pub pos: Vec2,
+    reference: ElemRect,
+    // after initial placement, floater has a position too
+    floater: ElemRect,
+    side: Side,
+}
+
+impl ModifierState {
+    pub fn new(reference: ElemRect, floater: ElemRect, side: Side) -> Self {
+        Self {
+            reference,
+            floater,
+            side,
+        }
+    }
+
+    pub fn reference(&self) -> &ElemRect {
+        &self.reference
+    }
+
+    pub fn floater(&self) -> &ElemRect {
+        &self.floater
+    }
+
+    pub fn floater_mut(&mut self) -> &mut ElemRect {
+        &mut self.floater
+    }
+
+    pub fn side(&self) -> Side {
+        self.side
+    }
+
+    pub fn side_mut(&mut self) -> &mut Side {
+        &mut self.side
+    }
 }
 
 pub trait Modifier {
-    fn run(&mut self, state: &ModifierState) -> Vec2;
+    fn run(&mut self, state: &mut ModifierState);
 }
 
 impl<F> Modifier for F
 where
-    F: FnMut(&ModifierState) -> Vec2,
+    F: FnMut(&mut ModifierState),
 {
-    fn run(&mut self, state: &ModifierState) -> Vec2 {
+    fn run(&mut self, state: &mut ModifierState) {
         self(state)
     }
 }
@@ -61,14 +95,15 @@ impl fmt::Debug for Modifiers<'_> {
 // actual modifiers //
 
 pub fn offset(amount: f64) -> impl Modifier {
-    move |ModifierState { side, pos, .. }: &ModifierState| {
-        let (x, y) = match side {
-            Side::Left => (pos.x - amount, pos.y),
-            Side::Right => (pos.x + amount, pos.y),
-            Side::Top => (pos.x, pos.y - amount),
-            Side::Bottom => (pos.x, pos.y + amount),
+    move |state: &mut ModifierState| {
+        let pos = state.floater();
+        let (x, y) = match state.side() {
+            Side::Left => (pos.x() - amount, pos.y()),
+            Side::Right => (pos.x() + amount, pos.y()),
+            Side::Top => (pos.x(), pos.y() - amount),
+            Side::Bottom => (pos.x(), pos.y() + amount),
         };
 
-        Vec2::new(x, y)
+        state.floater_mut().set_point(Vec2::new(x, y))
     }
 }
