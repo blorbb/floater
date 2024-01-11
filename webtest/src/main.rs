@@ -1,6 +1,11 @@
 #![feature(try_blocks)]
 
-use floater::{compute_position, modifiers::offset, ElemRect, ElemSize, PositionOpts, Side};
+use floater::{
+    compute_position,
+    geometry::{ElemRect, ElemSize},
+    modifiers::offset,
+    PositionOpts, Side,
+};
 use leptos::*;
 use leptos_mview::mview;
 use web_sys::{wasm_bindgen::JsCast, HtmlElement};

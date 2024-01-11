@@ -1,7 +1,7 @@
 use core::fmt;
 use std::vec;
 
-use crate::{vec2::Vec2, ElemRect, Side};
+use crate::{geometry::{Vec2, ElemRect}, Side};
 
 /// Allows each modifier to read position data.
 ///
