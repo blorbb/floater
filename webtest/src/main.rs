@@ -82,6 +82,8 @@ fn Single() -> impl IntoView {
             logging::log!("flt == {tip_size:?}");
             logging::log!("con == {container:?}");
 
+            let do_flip = false;
+
             let (x, y) = compute_position(
                 ref_rect,
                 tip_size,
@@ -89,7 +91,7 @@ fn Single() -> impl IntoView {
                 PositionOpts::new()
                     .with_side(Side::Right)
                     .add_modifier(&mut offset(5.0))
-                    .add_modifier(&mut flip().with_padding(10.0))
+                    .add_modifier(do_flip.then_some(&mut flip().with_padding(10.0)))
                     // .add_modifier(&mut shift().with_padding(20.0)),
             )
             .xy();

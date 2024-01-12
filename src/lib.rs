@@ -23,8 +23,17 @@ impl<'a> PositionOpts<'a> {
         self
     }
 
-    pub fn add_modifier(mut self, modifier: &'a mut impl Modifier) -> Self {
-        self.modifiers.push(modifier);
+    /// Can also pass in an Option to only add the modifier if it is [`Some`].
+    ///
+    /// This is intended to be used with [`bool::then`] to conditionally use a
+    /// modifier.
+    pub fn add_modifier<M: Modifier + 'a>(
+        mut self,
+        modifier: impl Into<Option<&'a mut M>>,
+    ) -> Self {
+        if let Some(m) = modifier.into() {
+            self.modifiers.push(m);
+        }
         self
     }
 }
