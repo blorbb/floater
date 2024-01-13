@@ -4,9 +4,7 @@ pub mod space;
 #[cfg(feature = "web-utils")]
 pub mod web;
 
-use std::mem;
-
-use geometry::{ElemRect, ElemSize, Side};
+use geometry::{ElemRect, ElemSize, Side, Vec2};
 use modifiers::{Modifier, ModifierState, Modifiers};
 
 #[derive(Debug, Default)]
@@ -38,6 +36,27 @@ impl<'a> PositionOpts<'a> {
     }
 }
 
+/// Computes the required position of the floater given only its side and no
+/// modifiers.
+///
+/// This is intended to only be used by modifiers - use [`compute_position`]
+/// otherwise.
+pub fn compute_position_from_placement(reference: ElemRect, floater: ElemSize, side: Side) -> Vec2 {
+    let x = match side {
+        Side::Top | Side::Bottom => reference.center().x - floater.width() / 2.0,
+        Side::Left => reference.left() - floater.width(),
+        Side::Right => reference.right(),
+    };
+
+    let y = match side {
+        Side::Left | Side::Right => reference.center().y - floater.height() / 2.0,
+        Side::Top => reference.top() - floater.height(),
+        Side::Bottom => reference.bottom(),
+    };
+
+    Vec2::new(x, y)
+}
+
 /// `reference` should be relative to the nearest scrolling context.
 ///
 /// The returned position will also be relative to the same context.
@@ -49,38 +68,19 @@ pub fn compute_position(
     container: ElemRect,
     opts: PositionOpts,
 ) -> ElemRect {
-    let x = match opts.side {
-        Side::Top | Side::Bottom => reference.center().x - floater.width() / 2.0,
-        Side::Left => reference.left() - floater.width(),
-        Side::Right => reference.right(),
-    };
-
-    let y = match opts.side {
-        Side::Left | Side::Right => reference.center().y - floater.height() / 2.0,
-        Side::Top => reference.top() - floater.height(),
-        Side::Bottom => reference.bottom(),
-    };
+    let point = compute_position_from_placement(reference, floater, opts.side);
 
     let mut state = ModifierState::new(
         reference,
-        ElemRect::new(x, y, floater.width(), floater.height()),
+        ElemRect::from_parts(point, floater),
         container,
         opts.side,
     );
 
     for modifier in opts.modifiers {
         let res = modifier.run(&state);
-
-        if let Some(point) = res.point {
-            *state.floater_mut().point_mut() = point;
-        }
-        if let Some(size) = res.size {
-            *state.floater_mut().size_mut() = size;
-        }
-        if let Some(side) = res.side {
-            *state.side_mut() = side;
-        }
+        state.update_with(res);
     }
 
-    mem::take(state.floater_mut())
+    state.floater
 }

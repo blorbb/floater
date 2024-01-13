@@ -92,8 +92,8 @@ fn Single() -> impl IntoView {
                 PositionOpts::new()
                     .with_side(Side::Right)
                     .add_modifier(&mut offset(5.0))
-                    .add_modifier(do_flip.then_some(&mut flip().with_padding(10.0)))
-                    .add_modifier(&mut shift().with_padding(10.0)),
+                    .add_modifier(do_flip.then_some(&mut flip().padding(10.0)))
+                    .add_modifier(&mut shift().padding(10.0)),
             )
             .xy();
             logging::log!("{x}, {y}");

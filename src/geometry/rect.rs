@@ -18,6 +18,8 @@ impl ElemRect {
         }
     }
 
+    pub fn from_parts(point: Vec2, size: ElemSize) -> Self { Self { point, size } }
+
     pub fn x(&self) -> f64 { self.point.x }
     pub fn y(&self) -> f64 { self.point.y }
     pub fn width(&self) -> f64 { self.size.width() }

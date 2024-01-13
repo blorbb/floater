@@ -11,20 +11,28 @@ pub struct Shift {
 }
 
 impl Shift {
-    pub fn with_padding(mut self, padding: f64) -> Self {
+    pub fn padding(mut self, padding: f64) -> Self {
         self.padding = padding;
         self
     }
 }
 
 impl Modifier for Shift {
-    fn run(&mut self, state: &ModifierState) -> ModifierReturn {
-        let space = space_around(state.floater(), state.container());
+    fn run(
+        &mut self,
+        ModifierState {
+            floater,
+            container,
+            side,
+            ..
+        }: &ModifierState,
+    ) -> ModifierReturn {
+        let space = space_around(floater, container);
 
-        for side in state.side().adjacents() {
+        for side in side.adjacents() {
             let space_on_side = space.on_side(side);
             if space_on_side < self.padding {
-                let mut new_point = state.floater().point();
+                let mut new_point = floater.point();
                 *new_point.coord_across(side) += match side {
                     Side::Top | Side::Left => -(space_on_side - self.padding),
                     Side::Bottom | Side::Right => space_on_side - self.padding,

@@ -33,21 +33,30 @@ impl Flip {
     }
 
     /// Allowed space from the container boundary before it attempts to flip.
-    pub fn with_padding(mut self, padding: f64) -> Self {
+    pub fn padding(mut self, padding: f64) -> Self {
         self.padding = padding;
         self
     }
 }
 
 impl Modifier for Flip {
-    fn run(&mut self, state: &ModifierState) -> ModifierReturn {
-        let container = *state.container();
-        let reference = *state.reference();
-        let initial_floater = *state.floater();
-        let initial_side = state.side();
+    fn run(
+        &mut self,
+        ModifierState {
+            reference,
+            floater,
+            container,
+            side,
+            ..
+        }: &ModifierState,
+    ) -> ModifierReturn {
+        let container = container;
+        let reference = reference;
+        let initial_floater = floater;
+        let initial_side = side;
 
         // has enough space, no need to flip
-        if space_around(state.floater(), &container).on_side(initial_side) > self.padding {
+        if space_around(floater, &container).on_side(*initial_side) > self.padding {
             return ModifierReturn::new();
         }
 
@@ -59,9 +68,9 @@ impl Modifier for Flip {
                 middle + diff
             }
 
-            let mut new_floater = *state.floater();
+            let mut new_floater = *floater;
 
-            match state.side() {
+            match side {
                 Side::Left => {
                     *new_floater.x_mut() =
                         next_equal_diff(initial_floater.right(), reference.center().x)
