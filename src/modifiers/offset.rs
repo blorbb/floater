@@ -1,8 +1,8 @@
-use super::{Modifier, ModifierState};
+use super::{Modifier, ModifierReturn, ModifierState};
 use crate::geometry::{Side, Vec2};
 
 pub fn offset(amount: f64) -> impl Modifier {
-    move |state: &mut ModifierState| {
+    move |state: &ModifierState| -> ModifierReturn {
         let pos = state.floater();
         let (x, y) = match state.side() {
             Side::Left => (pos.x() - amount, pos.y()),
@@ -11,6 +11,6 @@ pub fn offset(amount: f64) -> impl Modifier {
             Side::Bottom => (pos.x(), pos.y() + amount),
         };
 
-        *state.floater_mut().point_mut() = Vec2::new(x, y)
+        ModifierReturn::new().point(Vec2::new(x, y))
     }
 }

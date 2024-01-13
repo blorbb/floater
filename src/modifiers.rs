@@ -8,7 +8,10 @@
 use core::fmt;
 use std::vec;
 
-use crate::{geometry::ElemRect, Side};
+use crate::{
+    geometry::{ElemRect, ElemSize, Vec2},
+    Side,
+};
 
 /// Allows each modifier to read position data.
 ///
@@ -42,15 +45,47 @@ impl ModifierState {
     pub fn side_mut(&mut self) -> &mut Side { &mut self.side }
 }
 
+#[derive(Default)]
+pub struct ModifierReturn {
+    pub(crate) point: Option<Vec2>,
+    pub(crate) size: Option<ElemSize>,
+    pub(crate) side: Option<Side>,
+}
+
+impl ModifierReturn {
+    pub fn new() -> Self { Self::default() }
+
+    pub fn point(mut self, point: Vec2) -> Self {
+        self.point = Some(point);
+        self
+    }
+
+    pub fn size(mut self, size: ElemSize) -> Self {
+        self.size = Some(size);
+        self
+    }
+
+    pub fn side(mut self, side: Side) -> Self {
+        self.side = Some(side);
+        self
+    }
+
+    pub fn floater(mut self, rect: ElemRect) -> Self {
+        self = self.point(rect.point());
+        self = self.size(rect.size());
+        self
+    }
+}
+
 pub trait Modifier {
-    fn run(&mut self, state: &mut ModifierState);
+    fn run(&mut self, state: &ModifierState) -> ModifierReturn;
 }
 
 impl<F> Modifier for F
 where
-    F: FnMut(&mut ModifierState),
+    F: FnMut(&ModifierState) -> ModifierReturn,
 {
-    fn run(&mut self, state: &mut ModifierState) { self(state) }
+    fn run(&mut self, state: &ModifierState) -> ModifierReturn { self(state) }
 }
 
 pub struct Modifiers<'a>(Vec<&'a mut dyn Modifier>);

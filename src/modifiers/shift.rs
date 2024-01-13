@@ -1,4 +1,4 @@
-use super::{Modifier, ModifierState};
+use super::{Modifier, ModifierReturn, ModifierState};
 use crate::{geometry::Side, space::space_around};
 
 // TODO: option for shifting perpendicular to the side, use with the limiter
@@ -18,19 +18,21 @@ impl Shift {
 }
 
 impl Modifier for Shift {
-    fn run(&mut self, state: &mut ModifierState) {
+    fn run(&mut self, state: &ModifierState) -> ModifierReturn {
         let space = space_around(state.floater(), state.container());
-        let adjacent_sides = state.side().adjacents();
 
-        for side in adjacent_sides {
+        for side in state.side().adjacents() {
             let space_on_side = space.on_side(side);
             if space_on_side < self.padding {
-                *state.floater_mut().point_mut().coord_across(side) += match side {
-                    Side::Top | Side::Left => -space_on_side - self.padding,
-                    Side::Bottom | Side::Right => space_on_side + self.padding,
+                let mut new_point = state.floater().point();
+                *new_point.coord_across(side) += match side {
+                    Side::Top | Side::Left => -(space_on_side - self.padding),
+                    Side::Bottom | Side::Right => space_on_side - self.padding,
                 };
-                return;
+                return ModifierReturn::new().point(new_point);
             }
         }
+
+        ModifierReturn::new()
     }
 }

@@ -15,6 +15,7 @@ fn main() { mount_to_body(App) }
 
 #[component]
 fn App() -> impl IntoView {
+    console_error_panic_hook::set_once();
     mview! {
         // Single;
         div.scrolling {
@@ -82,7 +83,7 @@ fn Single() -> impl IntoView {
             logging::log!("flt == {tip_size:?}");
             logging::log!("con == {container:?}");
 
-            let do_flip = false;
+            let do_flip = true;
 
             let (x, y) = compute_position(
                 ref_rect,
@@ -92,7 +93,7 @@ fn Single() -> impl IntoView {
                     .with_side(Side::Right)
                     .add_modifier(&mut offset(5.0))
                     .add_modifier(do_flip.then_some(&mut flip().with_padding(10.0)))
-                    // .add_modifier(&mut shift().with_padding(20.0)),
+                    .add_modifier(&mut shift().with_padding(10.0)),
             )
             .xy();
             logging::log!("{x}, {y}");

@@ -69,7 +69,17 @@ pub fn compute_position(
     );
 
     for modifier in opts.modifiers {
-        modifier.run(&mut state);
+        let res = modifier.run(&state);
+
+        if let Some(point) = res.point {
+            *state.floater_mut().point_mut() = point;
+        }
+        if let Some(size) = res.size {
+            *state.floater_mut().size_mut() = size;
+        }
+        if let Some(side) = res.side {
+            *state.side_mut() = side;
+        }
     }
 
     mem::take(state.floater_mut())
