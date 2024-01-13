@@ -63,14 +63,7 @@ fn Single() -> impl IntoView {
             let container = reference
                 .offset_parent()
                 .and_then(|el| el.dyn_into::<HtmlElement>().ok())
-                .map(|el| {
-                    ElemRect::new(
-                        el.scroll_left() as f64,
-                        el.scroll_top() as f64,
-                        el.client_width() as f64,
-                        el.client_height() as f64,
-                    )
-                })
+                .map(|el| ElemRect::from_elem_visibility(el.as_ref()))
                 .expect("where offset parent gone :(");
             // let container = container.intersect(&client_rect);
 
