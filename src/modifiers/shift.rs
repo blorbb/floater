@@ -69,7 +69,7 @@ impl<L: ShiftLimiter> Modifier for Shift<L> {
 
 pub mod limiter {
     use super::super::ModifierState;
-    use crate::geometry::{Side, Vec2};
+    use crate::geometry::{side::Orientation, Vec2};
 
     pub trait ShiftLimiter {
         /// Should return a new position for where to place
@@ -115,15 +115,15 @@ pub mod limiter {
             }: &ModifierState,
         ) -> Vec2 {
             let padding = self.padding;
-            match side {
-                Side::Left | Side::Right => {
+            match side.orientation() {
+                Orientation::Vertical => {
                     // limit y
                     let miny = reference.top() + padding - floater.height();
                     let maxy = reference.bottom() - padding;
                     let y = floater.y().clamp(miny, maxy);
                     Vec2::new(floater.x(), y)
                 }
-                Side::Top | Side::Bottom => {
+                Orientation::Horizontal => {
                     // limit x
                     let minx = reference.left() + padding - floater.width();
                     let maxx = reference.right() - padding;

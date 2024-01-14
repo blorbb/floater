@@ -94,19 +94,19 @@ fn Single() -> impl IntoView {
                 PositionOpts::new()
                     .with_side(Side::Left)
                     .add_modifier(do_flip.then_some(&mut flip().padding(Padding {
-                        outward: 10.0,
+                        outward: 20.0,
                         sideways: 5.0,
                     })))
                     .add_modifier(
                         &mut shift()
                             .padding(Padding {
-                                outward: 10.0,
+                                outward: 20.0,
                                 sideways: 5.0,
                             })
                             // should be arrow size + sideways padding (+ arrow padding)
                             .limiter(limiter::attached(20.0)),
                     )
-                    .add_modifier(&mut offset(5.0))
+                    .add_modifier(&mut offset(15.0))
                     .add_modifier(&mut arrow(arrow_size, &mut arrow_data).padding(5.0)),
             )
             .rect

@@ -45,4 +45,23 @@ impl Side {
     /// of the side anticlockwise, then clockwise.
     #[must_use]
     pub const fn adjacents(self) -> [Self; 2] { [self.anticlockwise(), self.clockwise()] }
+
+    /// Returns the orientation of a side.
+    ///
+    /// Left/right => vertical, top/bottom => horizontal.
+    #[must_use]
+    pub const fn orientation(self) -> Orientation {
+        match self {
+            Self::Left | Self::Right => Orientation::Vertical,
+            Self::Top | Self::Bottom => Orientation::Horizontal,
+        }
+    }
+}
+
+/// The orientation of a [`Side`], either horizontal or vertical.
+///
+/// Created by [`Side::orientation`].
+pub enum Orientation {
+    Horizontal,
+    Vertical,
 }
