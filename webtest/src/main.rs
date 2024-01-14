@@ -3,7 +3,7 @@
 use floater::{
     compute_position,
     geometry::{ElemRect, ElemSize, Side},
-    modifiers::{flip, offset, shift},
+    modifiers::{flip, offset, shift, Padding},
     PositionOpts,
 };
 use leptos::*;
@@ -83,10 +83,16 @@ fn Single() -> impl IntoView {
                 tip_size,
                 container,
                 PositionOpts::new()
-                    .with_side(Side::Right)
-                    .add_modifier(&mut offset(5.0))
-                    .add_modifier(do_flip.then_some(&mut flip().padding(10.0)))
-                    .add_modifier(&mut shift().padding(10.0)),
+                    .with_side(Side::Bottom)
+                    .add_modifier(do_flip.then_some(&mut flip().padding(Padding {
+                        outward: 10.0,
+                        sideways: 5.0,
+                    })))
+                    .add_modifier(&mut shift().padding(Padding {
+                        outward: 10.0,
+                        sideways: 5.0,
+                    }))
+                    .add_modifier(&mut offset(5.0)),
             )
             .xy();
             logging::log!("{x}, {y}");

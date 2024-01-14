@@ -138,4 +138,19 @@ mod nest {
             f.debug_tuple("Modifiers").finish()
         }
     }
+
+    // TODO: need inward as well probably
+    pub struct Padding {
+        pub outward: f64,
+        pub sideways: f64,
+    }
+
+    impl From<f64> for Padding {
+        fn from(value: f64) -> Self {
+            Self {
+                outward: value,
+                sideways: value,
+            }
+        }
+    }
 }

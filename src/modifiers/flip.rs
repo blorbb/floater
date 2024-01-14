@@ -1,5 +1,8 @@
-use super::{Modifier, ModifierState};
-use crate::{geometry::Side, modifiers::ModifierReturn, space::space_around};
+use super::{Modifier, ModifierState, Padding};
+use crate::{
+    compute_position_from_placement, geometry::ElemRect, modifiers::ModifierReturn,
+    space::space_around,
+};
 
 // TODO: flip to side, option to flip to most space as fallback
 
@@ -7,14 +10,14 @@ pub fn flip() -> Flip {
     Flip {
         flip_across: true,
         flip_to_side: false,
-        padding: 0.0,
+        padding: 0.0.into(),
     }
 }
 
 pub struct Flip {
     flip_across: bool,
     flip_to_side: bool,
-    padding: f64,
+    padding: Padding,
 }
 
 impl Flip {
@@ -33,8 +36,8 @@ impl Flip {
     }
 
     /// Allowed space from the container boundary before it attempts to flip.
-    pub fn padding(mut self, padding: f64) -> Self {
-        self.padding = padding;
+    pub fn padding(mut self, padding: impl Into<Padding>) -> Self {
+        self.padding = padding.into();
         self
     }
 }
@@ -50,53 +53,19 @@ impl Modifier for Flip {
             ..
         }: &ModifierState,
     ) -> ModifierReturn {
-        let container = container;
-        let reference = reference;
-        let initial_floater = floater;
-        let initial_side = side;
-
         // has enough space, no need to flip
-        if space_around(floater, &container).on_side(*initial_side) > self.padding {
+        if space_around(floater, container).on_side(*side) > self.padding.outward {
             return ModifierReturn::new();
         }
 
         // try flip across
         if self.flip_across {
-            /// Next number with the same difference betweeen middle and first.
-            fn next_equal_diff(first: f64, middle: f64) -> f64 {
-                let diff = middle - first;
-                middle + diff
-            }
+            let opp = side.opposite();
+            let new_pos = compute_position_from_placement(*reference, floater.size(), opp);
+            let new_floater = ElemRect::from_parts(new_pos, floater.size());
 
-            let mut new_floater = *floater;
-
-            match side {
-                Side::Left => {
-                    *new_floater.x_mut() =
-                        next_equal_diff(initial_floater.right(), reference.center().x)
-                }
-                Side::Right => {
-                    *new_floater.x_mut() =
-                        next_equal_diff(initial_floater.left(), reference.center().x)
-                            - initial_floater.width()
-                }
-                Side::Top => {
-                    *new_floater.y_mut() =
-                        next_equal_diff(initial_floater.bottom(), reference.center().y)
-                }
-                Side::Bottom => {
-                    *new_floater.y_mut() =
-                        next_equal_diff(initial_floater.top(), reference.center().y)
-                            - initial_floater.height()
-                }
-            };
-
-            if space_around(&new_floater, &container).on_side(initial_side.opposite())
-                > self.padding
-            {
-                return ModifierReturn::new()
-                    .point(new_floater.point())
-                    .side(initial_side.opposite());
+            if space_around(&new_floater, container).on_side(opp) > self.padding.outward {
+                return ModifierReturn::new().point(new_floater.point()).side(opp);
             }
         }
 
