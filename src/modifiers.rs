@@ -23,7 +23,7 @@ mod nest {
     /// information to be passed in later. All fields will always be `pub`, so
     /// that you can unpack each field. A `..` pattern must always be included
     /// to ignore unused fields / due to `#[non_exhaustive]`.
-    #[derive(Debug)]
+    #[derive(Debug, Clone, Copy)]
     #[non_exhaustive]
     pub struct ModifierState {
         pub reference: ElemRect,

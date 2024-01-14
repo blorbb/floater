@@ -3,7 +3,7 @@
 use floater::{
     compute_position,
     geometry::{ElemRect, ElemSize, Side},
-    modifiers::{flip, offset, shift, Padding},
+    modifiers::{flip, offset, shift, shift::limiter, Padding},
     PositionOpts,
 };
 use leptos::*;
@@ -19,6 +19,7 @@ fn App() -> impl IntoView {
     mview! {
         // Single;
         div.scrolling {
+            div.padding-elem;
             Single;
             div.padding-elem {"aaa"}
         }
@@ -83,15 +84,19 @@ fn Single() -> impl IntoView {
                 tip_size,
                 container,
                 PositionOpts::new()
-                    .with_side(Side::Bottom)
+                    .with_side(Side::Left)
                     .add_modifier(do_flip.then_some(&mut flip().padding(Padding {
                         outward: 10.0,
                         sideways: 5.0,
                     })))
-                    .add_modifier(&mut shift().padding(Padding {
-                        outward: 10.0,
-                        sideways: 5.0,
-                    }))
+                    .add_modifier(
+                        &mut shift()
+                            .padding(Padding {
+                                outward: 10.0,
+                                sideways: 5.0,
+                            })
+                            .limiter(limiter::attached(7.5)),
+                    )
                     .add_modifier(&mut offset(5.0)),
             )
             .xy();
@@ -107,6 +112,6 @@ fn Single() -> impl IntoView {
         p {
             button ref={reference} { "reference el" }
         }
-        div.tooltip ref={tooltip} { "what" }
+        div.tooltip ref={tooltip} { "what" br; "aaaaa" br; br; "content" }
     }
 }
