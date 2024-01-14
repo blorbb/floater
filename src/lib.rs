@@ -39,6 +39,12 @@ impl<'a> PositionOpts<'a> {
     }
 }
 
+#[non_exhaustive]
+pub struct PositionInfo {
+    pub rect: ElemRect,
+    pub side: Side,
+}
+
 /// Computes the required position of the floater given only its side and no
 /// modifiers.
 ///
@@ -72,7 +78,7 @@ pub fn compute_position(
     floater: ElemSize,
     container: ElemRect,
     opts: PositionOpts,
-) -> ElemRect {
+) -> PositionInfo {
     let point = compute_position_from_placement(reference, floater, opts.side);
 
     let mut state = ModifierState::new(
@@ -87,5 +93,8 @@ pub fn compute_position(
         state.update_with(&res);
     }
 
-    state.floater
+    PositionInfo {
+        rect: state.floater,
+        side: state.side,
+    }
 }

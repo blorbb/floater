@@ -99,6 +99,7 @@ fn Single() -> impl IntoView {
                     )
                     .add_modifier(&mut offset(5.0)),
             )
+            .rect
             .xy();
             logging::log!("{x}, {y}");
 
