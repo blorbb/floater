@@ -21,6 +21,13 @@ p {
     border-radius: 2px;
 }
 
+.arrow {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: black;
+}
+
 .padding-elem {
     height: 20rem;
     background-color: aliceblue;

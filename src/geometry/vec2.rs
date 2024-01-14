@@ -16,7 +16,18 @@ impl Vec2 {
     /// the provided side.
     ///
     /// left/right => y, top/bottom => x.
-    pub fn coord_along(&mut self, side: Side) -> &mut f64 {
+    pub fn coord_along(&self, side: Side) -> f64 {
+        match side {
+            Side::Left | Side::Right => self.y,
+            Side::Top | Side::Bottom => self.x,
+        }
+    }
+
+    /// Returns the component of the coordinate that is in the direction along
+    /// the provided side.
+    ///
+    /// left/right => y, top/bottom => x.
+    pub fn coord_along_mut(&mut self, side: Side) -> &mut f64 {
         match side {
             Side::Left | Side::Right => &mut self.y,
             Side::Top | Side::Bottom => &mut self.x,
@@ -27,7 +38,18 @@ impl Vec2 {
     /// perpendicular to the provided side.
     ///
     /// left/right => x, top/bottom => y.
-    pub fn coord_across(&mut self, side: Side) -> &mut f64 {
+    pub fn coord_across(&self, side: Side) -> f64 {
+        match side {
+            Side::Left | Side::Right => self.x,
+            Side::Top | Side::Bottom => self.y,
+        }
+    }
+
+    /// Returns the component of the coordinate that is in the direction
+    /// perpendicular to the provided side.
+    ///
+    /// left/right => x, top/bottom => y.
+    pub fn coord_across_mut(&mut self, side: Side) -> &mut f64 {
         match side {
             Side::Left | Side::Right => &mut self.x,
             Side::Top | Side::Bottom => &mut self.y,

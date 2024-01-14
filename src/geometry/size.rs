@@ -1,4 +1,4 @@
-use super::Vec2;
+use super::{Side, Vec2};
 
 #[derive(Debug, Default, Clone, Copy)]
 pub struct ElemSize(Vec2);
@@ -14,4 +14,10 @@ impl ElemSize {
 
     #[must_use]
     pub const fn as_vec2(&self) -> &Vec2 { &self.0 }
+
+    #[must_use]
+    pub fn dim_along(&self, side: Side) -> f64 { self.as_vec2().coord_along(side) }
+
+    #[must_use]
+    pub fn dim_across(&self, side: Side) -> f64 { self.as_vec2().coord_across(side) }
 }

@@ -20,3 +20,6 @@ members = ["webtest"]
 pedantic = "warn"
 nursery = "warn"
 module_name_repetitions = "allow"
+
+[lints.rust]
+unreachable_pub = "warn"

@@ -49,7 +49,7 @@ impl<L: ShiftLimiter> Modifier for Shift<L> {
             if space_on_side < self.padding.sideways {
                 let mut new_point = floater.point();
                 let shift_amount = space_on_side - self.padding.sideways;
-                *new_point.coord_across(side) += match side {
+                *new_point.coord_across_mut(side) += match side {
                     Side::Top | Side::Left => -shift_amount,
                     Side::Bottom | Side::Right => shift_amount,
                 };

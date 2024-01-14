@@ -3,7 +3,7 @@
 use floater::{
     compute_position,
     geometry::{ElemRect, ElemSize, Side},
-    modifiers::{flip, offset, shift, shift::limiter, Padding},
+    modifiers::{arrow, arrow::ArrowData, flip, offset, shift, shift::limiter, Padding},
     PositionOpts,
 };
 use leptos::*;
@@ -31,6 +31,7 @@ fn App() -> impl IntoView {
 fn Single() -> impl IntoView {
     let reference = NodeRef::<html::Button>::new();
     let tooltip = NodeRef::<html::Div>::new();
+    let arrow_el = NodeRef::<html::Div>::new();
 
     let refresh = RwSignal::new(());
 
@@ -52,6 +53,8 @@ fn Single() -> impl IntoView {
         let _: Option<_> = try {
             let reference = reference.get()?;
             let floater = tooltip.get()?;
+            let arrow_el = arrow_el.get()?;
+
             // let viewport = document().document_element()?;
             // let scroll = document().scrolling_element()?;
             // let client_rect = ElemRect::new(
@@ -73,11 +76,16 @@ fn Single() -> impl IntoView {
                 floater.offset_width() as f64,
                 floater.offset_height() as f64,
             );
+            let arrow_size = ElemSize::new(
+                arrow_el.offset_width() as f64,
+                arrow_el.offset_height() as f64,
+            );
             logging::log!("ref == {ref_rect:?}");
             logging::log!("flt == {tip_size:?}");
             logging::log!("con == {container:?}");
 
             let do_flip = true;
+            let mut arrow_data = ArrowData::new();
 
             let (x, y) = compute_position(
                 ref_rect,
@@ -95,17 +103,27 @@ fn Single() -> impl IntoView {
                                 outward: 10.0,
                                 sideways: 5.0,
                             })
-                            .limiter(limiter::attached(7.5)),
+                            // should be arrow size + sideways padding (+ arrow padding)
+                            .limiter(limiter::attached(20.0)),
                     )
-                    .add_modifier(&mut offset(5.0)),
+                    .add_modifier(&mut offset(5.0))
+                    .add_modifier(&mut arrow(arrow_size, &mut arrow_data).padding(5.0)),
             )
             .rect
             .xy();
             logging::log!("{x}, {y}");
 
-            let tip_styles = tooltip.get().as_deref()?.style();
+            let tip_styles = (*floater).style();
             tip_styles.set_property("top", &format!("{y}px")).ok()?;
             tip_styles.set_property("left", &format!("{x}px")).ok()?;
+
+            let arrow_styles = (*arrow_el).style();
+            arrow_styles
+                .set_property("top", &format!("{}px", arrow_data.pos().y))
+                .ok()?;
+            arrow_styles
+                .set_property("left", &format!("{}px", arrow_data.pos().x))
+                .ok()?;
         };
     });
 
@@ -113,6 +131,9 @@ fn Single() -> impl IntoView {
         p {
             button ref={reference} { "reference el" }
         }
-        div.tooltip ref={tooltip} { "what" br; "aaaaa" br; br; "content" }
+        div.tooltip ref={tooltip} {
+            "what" br; "aaaaa" br; br; "content"
+            div.arrow ref={arrow_el};
+        }
     }
 }
