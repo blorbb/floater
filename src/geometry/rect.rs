@@ -11,28 +11,41 @@ pub struct ElemRect {
 }
 
 impl ElemRect {
-    pub fn new(x: f64, y: f64, width: f64, height: f64) -> Self {
+    #[must_use]
+    pub const fn new(x: f64, y: f64, width: f64, height: f64) -> Self {
         Self {
             point: Vec2::new(x, y),
             size: ElemSize::new(width, height),
         }
     }
 
-    pub fn from_parts(point: Vec2, size: ElemSize) -> Self { Self { point, size } }
+    #[must_use]
+    pub const fn from_parts(point: Vec2, size: ElemSize) -> Self { Self { point, size } }
 
-    pub fn x(&self) -> f64 { self.point.x }
-    pub fn y(&self) -> f64 { self.point.y }
-    pub fn width(&self) -> f64 { self.size.width() }
-    pub fn height(&self) -> f64 { self.size.height() }
+    #[must_use]
+    pub const fn x(&self) -> f64 { self.point.x }
+    #[must_use]
+    pub const fn y(&self) -> f64 { self.point.y }
+    #[must_use]
+    pub const fn width(&self) -> f64 { self.size.width() }
+    #[must_use]
+    pub const fn height(&self) -> f64 { self.size.height() }
 
-    pub fn left(&self) -> f64 { self.x() }
+    #[must_use]
+    pub const fn left(&self) -> f64 { self.x() }
+    #[must_use]
     pub fn right(&self) -> f64 { self.x() + self.width() }
-    pub fn top(&self) -> f64 { self.y() }
+    #[must_use]
+    pub const fn top(&self) -> f64 { self.y() }
+    #[must_use]
     pub fn bottom(&self) -> f64 { self.y() + self.height() }
 
-    pub fn xy(&self) -> (f64, f64) { (self.x(), self.y()) }
-    pub fn point(&self) -> Vec2 { self.point }
-    pub fn size(&self) -> ElemSize { self.size }
+    #[must_use]
+    pub const fn xy(&self) -> (f64, f64) { (self.x(), self.y()) }
+    #[must_use]
+    pub const fn point(&self) -> Vec2 { self.point }
+    #[must_use]
+    pub const fn size(&self) -> ElemSize { self.size }
 
     pub fn point_mut(&mut self) -> &mut Vec2 { &mut self.point }
     pub fn size_mut(&mut self) -> &mut ElemSize { &mut self.size }
@@ -40,6 +53,7 @@ impl ElemRect {
     pub fn x_mut(&mut self) -> &mut f64 { &mut self.point.x }
     pub fn y_mut(&mut self) -> &mut f64 { &mut self.point.y }
 
+    #[must_use]
     pub fn center(&self) -> Vec2 {
         Vec2::new(
             self.x() + self.width() / 2.0,

@@ -14,9 +14,11 @@ pub struct PositionOpts<'a> {
 }
 
 impl<'a> PositionOpts<'a> {
+    #[must_use]
     pub fn new() -> Self { Self::default() }
 
-    pub fn with_side(mut self, side: Side) -> Self {
+    #[must_use]
+    pub const fn with_side(mut self, side: Side) -> Self {
         self.side = side;
         self
     }
@@ -25,6 +27,7 @@ impl<'a> PositionOpts<'a> {
     ///
     /// This is intended to be used with [`bool::then`] to conditionally use a
     /// modifier.
+    #[must_use]
     pub fn add_modifier<M: Modifier + 'a>(
         mut self,
         modifier: impl Into<Option<&'a mut M>>,
@@ -41,6 +44,7 @@ impl<'a> PositionOpts<'a> {
 ///
 /// This is intended to only be used by modifiers - use [`compute_position`]
 /// otherwise.
+#[must_use]
 pub fn compute_position_from_placement(reference: ElemRect, floater: ElemSize, side: Side) -> Vec2 {
     let x = match side {
         Side::Top | Side::Bottom => reference.center().x - floater.width() / 2.0,
@@ -62,6 +66,7 @@ pub fn compute_position_from_placement(reference: ElemRect, floater: ElemSize, s
 /// The returned position will also be relative to the same context.
 ///
 /// `container` is the section of the scrolling context that is visible.
+#[must_use]
 pub fn compute_position(
     reference: ElemRect,
     floater: ElemSize,
@@ -79,7 +84,7 @@ pub fn compute_position(
 
     for modifier in opts.modifiers {
         let res = modifier.run(&state);
-        state.update_with(res);
+        state.update_with(&res);
     }
 
     state.floater

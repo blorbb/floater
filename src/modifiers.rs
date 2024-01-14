@@ -34,7 +34,8 @@ mod nest {
     }
 
     impl ModifierState {
-        pub fn new(
+        #[must_use]
+        pub const fn new(
             reference: ElemRect,
             floater: ElemRect,
             container: ElemRect,
@@ -48,7 +49,7 @@ mod nest {
             }
         }
 
-        pub fn update_with(&mut self, res: ModifierReturn) {
+        pub fn update_with(&mut self, res: &ModifierReturn) {
             if let Some(point) = res.point {
                 *self.floater.point_mut() = point;
             }
@@ -69,33 +70,46 @@ mod nest {
     }
 
     impl ModifierReturn {
-        pub fn new() -> Self { Self::default() }
+        #[must_use]
+        pub const fn new() -> Self {
+            Self {
+                point: None,
+                size: None,
+                side: None,
+            }
+        }
 
-        pub fn point(mut self, point: Vec2) -> Self {
+        #[must_use]
+        pub const fn point(mut self, point: Vec2) -> Self {
             self.point = Some(point);
             self
         }
 
+        #[must_use]
         #[rustfmt::skip]
-        pub fn point_xy(self, x: f64, y: f64) -> Self {
+        pub const fn point_xy(self, x: f64, y: f64) -> Self {
             self.point(Vec2::new(x, y))
         }
 
-        pub fn size(mut self, size: ElemSize) -> Self {
+        #[must_use]
+        pub const fn size(mut self, size: ElemSize) -> Self {
             self.size = Some(size);
             self
         }
 
-        pub fn size_wh(self, width: f64, height: f64) -> Self {
+        #[must_use]
+        pub const fn size_wh(self, width: f64, height: f64) -> Self {
             self.size(ElemSize::new(width, height))
         }
 
-        pub fn side(mut self, side: Side) -> Self {
+        #[must_use]
+        pub const fn side(mut self, side: Side) -> Self {
             self.side = Some(side);
             self
         }
 
-        pub fn floater(mut self, rect: ElemRect) -> Self {
+        #[must_use]
+        pub const fn floater(mut self, rect: ElemRect) -> Self {
             self = self.point(rect.point());
             self = self.size(rect.size());
             self
@@ -116,6 +130,7 @@ mod nest {
     pub struct Modifiers<'a>(Vec<&'a mut dyn Modifier>);
 
     impl<'a> Modifiers<'a> {
+        #[must_use]
         pub fn new() -> Self { Self(Vec::new()) }
 
         pub fn push(&mut self, modifier: &'a mut impl Modifier) { self.0.push(modifier) }

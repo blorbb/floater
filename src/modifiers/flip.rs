@@ -6,6 +6,7 @@ use crate::{
 
 // TODO: flip to side, option to flip to most space as fallback
 
+#[must_use]
 pub fn flip() -> Flip {
     Flip {
         flip_across: true,
@@ -23,19 +24,22 @@ pub struct Flip {
 impl Flip {
     /// Whether to flip to the opposite side of the reference if no space is
     /// left.
-    pub fn flip_across(mut self, b: bool) -> Self {
+    #[must_use]
+    pub const fn flip_across(mut self, b: bool) -> Self {
         self.flip_across = b;
         self
     }
 
     /// Whether to flip to an adjacent side of the reference if the initial and
     /// opposite sides do not fit.
-    pub fn flip_to_side(mut self, b: bool) -> Self {
+    #[must_use]
+    pub const fn flip_to_side(mut self, b: bool) -> Self {
         self.flip_to_side = b;
         self
     }
 
     /// Allowed space from the container boundary before it attempts to flip.
+    #[must_use]
     pub fn padding(mut self, padding: impl Into<Padding>) -> Self {
         self.padding = padding.into();
         self

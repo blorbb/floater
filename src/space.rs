@@ -11,7 +11,8 @@ pub struct SpaceAround {
 }
 
 impl SpaceAround {
-    pub fn on_side(&self, side: Side) -> f64 {
+    #[must_use]
+    pub const fn on_side(&self, side: Side) -> f64 {
         match side {
             Side::Left => self.left,
             Side::Top => self.top,
@@ -20,9 +21,11 @@ impl SpaceAround {
         }
     }
 
+    #[must_use]
     pub fn min(&self) -> f64 { self.left.min(self.top).min(self.right).min(self.bottom) }
 }
 
+#[must_use]
 pub fn space_around(rect: &ElemRect, container: &ElemRect) -> SpaceAround {
     SpaceAround {
         left: rect.left() - container.left(),

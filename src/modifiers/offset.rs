@@ -1,6 +1,7 @@
 use super::{Modifier, ModifierReturn, ModifierState};
 use crate::geometry::Side;
 
+#[must_use]
 pub fn offset(amount: f64) -> impl Modifier {
     move |ModifierState { floater, side, .. }: &_| -> ModifierReturn {
         let pos = floater;

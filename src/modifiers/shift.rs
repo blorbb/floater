@@ -5,6 +5,7 @@ use crate::{geometry::Side, space::space_around};
 // TODO: option for shifting perpendicular to the side, use with the limiter
 // so that it only shifts away from
 
+#[must_use]
 pub fn shift() -> Shift<Attached> {
     Shift {
         padding: 0.0.into(),
@@ -18,11 +19,13 @@ pub struct Shift<L> {
 }
 
 impl<L> Shift<L> {
+    #[must_use]
     pub fn padding(mut self, padding: impl Into<Padding>) -> Self {
         self.padding = padding.into();
         self
     }
 
+    #[must_use]
     pub fn limiter<U: ShiftLimiter>(self, limiter: U) -> Shift<U> {
         Shift {
             limiter,
@@ -90,7 +93,8 @@ pub mod limiter {
         }
     }
 
-    pub fn no_limit() -> NoLimit {
+    #[must_use]
+    pub const fn no_limit() -> NoLimit {
         // return itself
         NoLimit
     }
@@ -130,5 +134,6 @@ pub mod limiter {
         }
     }
 
-    pub fn attached(padding: f64) -> Attached { Attached { padding } }
+    #[must_use]
+    pub const fn attached(padding: f64) -> Attached { Attached { padding } }
 }

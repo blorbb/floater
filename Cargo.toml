@@ -15,3 +15,8 @@ web-utils = ["dep:web-sys"]
 
 [workspace]
 members = ["webtest"]
+
+[lints.clippy]
+pedantic = "warn"
+nursery = "warn"
+module_name_repetitions = "allow"
