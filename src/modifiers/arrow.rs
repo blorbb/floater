@@ -29,7 +29,7 @@ pub struct Arrow<'a> {
 impl Arrow<'_> {
     /// How far the arrow must stay from the corners of the floater.
     #[must_use]
-    pub fn padding(mut self, padding: f64) -> Self {
+    pub const fn padding(mut self, padding: f64) -> Self {
         self.padding = padding;
         self
     }
@@ -89,13 +89,16 @@ impl ArrowData {
     /// Creates new [`ArrowData`] with dummy information stored. This should
     /// not be used before being properly populated with data passed in by the
     /// [`arrow`] out parameter.
+    #[must_use]
     pub fn new() -> Self { Self::default() }
 
     /// The position of the arrow relative to the floater element. This should
     /// be used to set the `left` and `top` CSS properties.
-    pub fn pos(&self) -> Vec2 { self.pos }
+    #[must_use]
+    pub const fn pos(&self) -> Vec2 { self.pos }
 
     /// How far the arrow is relative to the ideal position (centered on the
     /// reference element). Will always be non-negative.
-    pub fn center_offset(&self) -> f64 { self.center_offset }
+    #[must_use]
+    pub const fn center_offset(&self) -> f64 { self.center_offset }
 }

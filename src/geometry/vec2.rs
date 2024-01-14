@@ -16,7 +16,8 @@ impl Vec2 {
     /// the provided side.
     ///
     /// left/right => y, top/bottom => x.
-    pub fn coord_along(&self, side: Side) -> f64 {
+    #[must_use]
+    pub const fn coord_along(&self, side: Side) -> f64 {
         match side {
             Side::Left | Side::Right => self.y,
             Side::Top | Side::Bottom => self.x,
@@ -38,7 +39,8 @@ impl Vec2 {
     /// perpendicular to the provided side.
     ///
     /// left/right => x, top/bottom => y.
-    pub fn coord_across(&self, side: Side) -> f64 {
+    #[must_use]
+    pub const fn coord_across(&self, side: Side) -> f64 {
         match side {
             Side::Left | Side::Right => self.x,
             Side::Top | Side::Bottom => self.y,
