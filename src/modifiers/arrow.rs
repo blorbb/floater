@@ -11,9 +11,9 @@ use crate::geometry::{ElemSize, Side, Vec2};
 ///
 /// You should also use the `side` information provided by
 /// [`compute_position`](crate::compute_position) to rotate the arrow as needed.
-pub fn arrow(size: ElemSize, data: &mut ArrowData) -> Arrow {
+pub fn arrow(size: ArrowSize, data: &mut ArrowData) -> Arrow {
     Arrow {
-        size,
+        arrow_size: size,
         data,
         padding: 0.0,
     }
@@ -21,7 +21,7 @@ pub fn arrow(size: ElemSize, data: &mut ArrowData) -> Arrow {
 
 #[doc(hidden)]
 pub struct Arrow<'a> {
-    size: ElemSize,
+    arrow_size: ArrowSize,
     padding: f64,
     data: &'a mut ArrowData,
 }
@@ -53,7 +53,7 @@ impl<'a> Modifier for Arrow<'a> {
             floater.center().coord_along(*side) - reference.center().coord_along(*side);
 
         // saturate at 0 in case padding > tooltip size, avoids panic in the clamp
-        let max_shift = (ideal_center - self.size.dim_along(*side) / 2.0 - self.padding).max(0.0);
+        let max_shift = (ideal_center - self.arrow_size.inline() / 2.0 - self.padding).max(0.0);
         let arrow_shift = shifted_amount.clamp(-max_shift, max_shift);
 
         let skid = ideal_center - arrow_shift;
@@ -62,16 +62,15 @@ impl<'a> Modifier for Arrow<'a> {
 
         let arrow_side = side.opposite();
         // position of the other coordinate. e.g. for Side::Top, `center` is the
-        // x-coord, need a y-coord of `-self.size.height()`
+        // x-coord, need a y-coord of the arrow height.
         let outset = match arrow_side {
-            Side::Left => -self.size.width(),
-            Side::Top => -self.size.height(),
+            Side::Left | Side::Top => -self.arrow_size.block(),
             Side::Right => floater.width(),
             Side::Bottom => floater.height(),
         };
 
         // move from center to top-left
-        *self.data.pos.coord_along_mut(*side) = skid - self.size.dim_along(*side) / 2.0;
+        *self.data.pos.coord_along_mut(*side) = skid - self.arrow_size.inline() / 2.0;
         *self.data.pos.coord_across_mut(*side) = outset;
         self.data.center_offset = (ideal_center - skid).abs();
 
@@ -101,4 +100,23 @@ impl ArrowData {
     /// reference element). Will always be non-negative.
     #[must_use]
     pub const fn center_offset(&self) -> f64 { self.center_offset }
+}
+
+/// The size of the arrow element independent of orientation.
+///
+/// `inline` = length of the arrow parallel to the side it's on; i.e. the width
+/// if placed on the top/bottom.
+///
+/// `block` = length of the arrow perpendicular to the side it's on; i.e. the
+/// height if placed on the top/bottom.
+pub struct ArrowSize(ElemSize);
+
+impl ArrowSize {
+    #[must_use]
+    pub const fn new(inline: f64, block: f64) -> Self { Self(ElemSize::new(inline, block)) }
+
+    #[must_use]
+    pub const fn inline(&self) -> f64 { self.0.width() }
+    #[must_use]
+    pub const fn block(&self) -> f64 { self.0.height() }
 }

@@ -3,7 +3,13 @@
 use floater::{
     compute_position,
     geometry::{ElemRect, ElemSize, Side},
-    modifiers::{arrow, arrow::ArrowData, flip, offset, shift, shift::limiter, Padding},
+    modifiers::{
+        arrow,
+        arrow::{ArrowData, ArrowSize},
+        flip, offset, shift,
+        shift::limiter,
+        Padding,
+    },
     PositionOpts,
 };
 use leptos::*;
@@ -76,7 +82,7 @@ fn Single() -> impl IntoView {
                 floater.offset_width() as f64,
                 floater.offset_height() as f64,
             );
-            let arrow_size = ElemSize::new(
+            let arrow_size = ArrowSize::new(
                 arrow_el.offset_width() as f64,
                 arrow_el.offset_height() as f64,
             );
