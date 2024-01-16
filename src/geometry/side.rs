@@ -59,12 +59,14 @@ impl Side {
 
     /// Returns the CSS inset property of the given side, i.e. the side name in
     /// all lowercase.
+    #[cfg(feature = "web-utils")]
+    #[must_use]
     pub const fn as_css_prop(self) -> &'static str {
         match self {
-            Side::Left => "left",
-            Side::Top => "top",
-            Side::Right => "right",
-            Side::Bottom => "bottom",
+            Self::Left => "left",
+            Self::Top => "top",
+            Self::Right => "right",
+            Self::Bottom => "bottom",
         }
     }
 }

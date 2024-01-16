@@ -141,7 +141,9 @@ impl ArrowData {
     ///   the outside of the floater.
     /// - A `transform` property to rotate the arrow to point toward the
     ///   reference.
+    #[allow(clippy::similar_names)]
     #[cfg(feature = "web-utils")]
+    #[must_use]
     pub fn generate_css_text(&self, floater_side: Side, arrow_size: f64, unit: &str) -> String {
         let arrow_side = floater_side.opposite();
         let outset_property = arrow_side.as_css_prop();
