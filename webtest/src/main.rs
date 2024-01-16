@@ -3,13 +3,7 @@
 use floater::{
     compute_position,
     geometry::{ElemRect, ElemSize, Side},
-    modifiers::{
-        arrow,
-        arrow::{ArrowData, ArrowSize},
-        flip, offset, shift,
-        shift::limiter,
-        Padding,
-    },
+    modifiers::{arrow, arrow::ArrowData, flip, offset, shift, shift::limiter, Padding},
     PositionOpts,
 };
 use leptos::*;
@@ -82,10 +76,6 @@ fn Single() -> impl IntoView {
                 floater.offset_width() as f64,
                 floater.offset_height() as f64,
             );
-            let arrow_size = ArrowSize::new(
-                arrow_el.offset_width() as f64,
-                arrow_el.offset_height() as f64,
-            );
             logging::log!("ref == {ref_rect:?}");
             logging::log!("flt == {tip_size:?}");
             logging::log!("con == {container:?}");
@@ -93,7 +83,7 @@ fn Single() -> impl IntoView {
             let do_flip = true;
             let mut arrow_data = ArrowData::new();
 
-            let (x, y) = compute_position(
+            let data = compute_position(
                 ref_rect,
                 tip_size,
                 container,
@@ -113,10 +103,12 @@ fn Single() -> impl IntoView {
                             .limiter(limiter::attached(20.0)),
                     )
                     .add_modifier(&mut offset(15.0))
-                    .add_modifier(&mut arrow(arrow_size, &mut arrow_data).padding(5.0)),
-            )
-            .rect
-            .xy();
+                    .add_modifier(
+                        &mut arrow(arrow_el.offset_width() as f64, &mut arrow_data).padding(5.0),
+                    ),
+            );
+            let (x, y) = data.rect.xy();
+            let side = data.side;
             logging::log!("{x}, {y}");
 
             let tip_styles = (*floater).style();
@@ -124,12 +116,14 @@ fn Single() -> impl IntoView {
             tip_styles.set_property("left", &format!("{x}px")).ok()?;
 
             let arrow_styles = (*arrow_el).style();
-            arrow_styles
-                .set_property("top", &format!("{}px", arrow_data.pos().y))
-                .ok()?;
-            arrow_styles
-                .set_property("left", &format!("{}px", arrow_data.pos().x))
-                .ok()?;
+            arrow_styles.set_css_text(&arrow_data.generate_css_text(
+                side,
+                ElemSize::new(
+                    arrow_el.offset_width() as f64,
+                    arrow_el.offset_height() as f64,
+                ),
+                "px",
+            ))
         };
     });
 
@@ -139,7 +133,7 @@ fn Single() -> impl IntoView {
         }
         div.tooltip ref={tooltip} {
             "what" br; "aaaaa" br; br; "content"
-            div.arrow ref={arrow_el};
+            div.arrow ref={arrow_el} { div.arrow-style; }
         }
     }
 }

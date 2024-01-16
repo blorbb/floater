@@ -56,6 +56,17 @@ impl Side {
             Self::Top | Self::Bottom => Orientation::Horizontal,
         }
     }
+
+    /// Returns the CSS inset property of the given side, i.e. the side name in
+    /// all lowercase.
+    pub const fn as_css_prop(self) -> &'static str {
+        match self {
+            Side::Left => "left",
+            Side::Top => "top",
+            Side::Right => "right",
+            Side::Bottom => "bottom",
+        }
+    }
 }
 
 /// The orientation of a [`Side`], either horizontal or vertical.

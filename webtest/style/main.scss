@@ -23,9 +23,11 @@ p {
 
 .arrow {
     position: absolute;
-    width: 10px;
+    // top: 0;
+    // left: 0;
+    width: 36.29px;
     height: 10px;
-    background-color: black;
+    background: linear-gradient(to top, black, white);
 }
 
 .padding-elem {
