@@ -1,5 +1,5 @@
 use super::{Modifier, ModifierReturn, ModifierState};
-use crate::geometry::{side::Orientation, ElemSize, Side};
+use crate::geometry::{side::Orientation, Side};
 
 /// The arrow element should be inside the floater element, where both floater
 /// and arrow has `position: absolute`.
@@ -11,6 +11,9 @@ use crate::geometry::{side::Orientation, ElemSize, Side};
 ///
 /// You should also use the `side` information provided by
 /// [`compute_position`](crate::compute_position) to rotate the arrow as needed.
+/// For the web, you can also use the [`ArrowData::generate_css_text`] method
+/// (requires `web-utils` feature). Extra conditions about the arrow's styles
+/// are required to use it.
 pub fn arrow(inline_len: f64, data: &mut ArrowData) -> Arrow {
     Arrow {
         inline_len,
@@ -97,36 +100,49 @@ impl ArrowData {
     #[must_use]
     pub const fn center_offset(&self) -> f64 { self.center_offset }
 
-    /// Generates the CSS properties (name, value) to set on the
-    /// arrow element.
+    /// Generates CSS properties to set on the arrow element.
     ///
-    /// The arrow element must be oriented to have the arrow pointing upwards
-    /// by default, without the use of any `transform` properties (as they will
-    /// be overridden by this method).
+    /// The arrow element **must be square** with the arrow centered, on the
+    /// **top edge, pointing down**. This can *usually* be achieved with the
+    /// following CSS:
+    ///
+    /// ```text
+    /// /* the element to put these styles on */
+    /// .arrow-pos {
+    ///     position: absolute;
+    ///     aspect-ratio: 1;
+    /// }
+    ///
+    /// /* nested inside .arrow-pos, containing the actual arrow */
+    /// .arrow-inner {
+    ///     position: relative;
+    ///     /* width, height, ... */
+    /// }
+    /// ```
+    ///
+    /// The generated styles should then be set on the `.arrow-pos` element
+    /// above, using [`web_sys::CssStyleDeclaration::set_css_text`].
     ///
     /// The extra information required is:
-    /// - `floater_side`: which side of the reference the floater is on. This is
-    ///   opposite to the direction the arrow will point, so that you can
-    ///   directly pass in the side returned by
+    /// - `floater_side`: which side of the reference the **floater** is on.
+    ///   This is opposite to the direction the arrow will point, so that you
+    ///   can directly pass in the side returned by
     ///   [`compute_position`](crate::compute_position).
-    /// - `arrow_height`: height of the arrow when pointing downwards.
+    /// - `arrow_size`: side length of the arrow element. This should be the
+    ///   same as the `inline_len` parameter passed in to the [`arrow`]
+    ///   modifier.
     /// - `unit`: which units to use. This should be the same as the units used
     ///   to calculate the arrow's position - in most cases, "px".
     ///
-    /// The properties are:
+    /// The properties returned are:
     /// - A `left` or `top` property to align the arrow along the side of the
     ///   floater.
-    /// - Another inset property to push the arrow to the outside of the
-    ///   floater. The value of this is determined by the `block_len` parameter.
+    /// - Another inset property (top/left/bottom/right) to push the arrow to
+    ///   the outside of the floater.
     /// - A `transform` property to rotate the arrow to point toward the
     ///   reference.
-    /// - A `transform-origin` property to align the rotation properly.
-    pub fn generate_css_text(
-        &self,
-        floater_side: Side,
-        arrow_size: ElemSize,
-        unit: &str,
-    ) -> String {
+    #[cfg(feature = "web-utils")]
+    pub fn generate_css_text(&self, floater_side: Side, arrow_size: f64, unit: &str) -> String {
         let arrow_side = floater_side.opposite();
         let outset_property = arrow_side.as_css_prop();
 
@@ -137,33 +153,19 @@ impl ArrowData {
         };
 
         let rotation = match arrow_side {
-            Side::Bottom => "180deg",
-            Side::Top => "0deg",
-            Side::Left => "-90deg",
-            Side::Right => "90deg",
-        };
-
-        // new origin: turn the arrow into a square with side length of the longest side
-        // rotate around the origin of that square.
-        // since arrow is pointing down, using center for horizontal will work. only
-        // need a specific length for vertical, if height != width.
-        // just rotate around center if flipping though.
-        // TODO: require square arrow to make this more consistent?
-        let longest = f64::max(arrow_size.width(), arrow_size.height());
-        let vertical_center = match arrow_side.orientation() {
-            Orientation::Horizontal => "center".to_string(),
-            Orientation::Vertical => format!("{}{unit}", longest / 2.0),
+            Side::Bottom => "0deg",
+            Side::Top => "180deg",
+            Side::Left => "90deg",
+            Side::Right => "-90deg",
         };
 
         let offset = self.offset;
-        let arrow_height = arrow_size.height();
 
         format!(
             "\
-            {outset_property}: -{arrow_height}{unit};\
+            {outset_property}: -{arrow_size}{unit};\
             {offset_property}: {offset}{unit};\
             transform: rotate({rotation});\
-            transform-origin: center {vertical_center};
             "
         )
     }
