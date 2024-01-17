@@ -157,17 +157,55 @@ mod nest {
     }
 
     // TODO: need inward as well probably
+    #[derive(Default)]
     pub struct Padding {
         pub outward: f64,
-        pub sideways: f64,
+        pub inward: f64,
+        pub cross: f64,
     }
 
-    impl From<f64> for Padding {
-        fn from(value: f64) -> Self {
+    impl Padding {
+        #[must_use]
+        pub const fn splat(value: f64) -> Self {
             Self {
                 outward: value,
-                sideways: value,
+                inward: value,
+                cross: value,
             }
         }
+    }
+
+    #[macro_export]
+    macro_rules! impl_padding_builder {
+        ($path:ident) => {
+            #[must_use]
+            pub const fn padding(mut self, padding: f64) -> Self {
+                self.$path = $crate::modifiers::Padding::splat(padding);
+                self
+            }
+
+            #[must_use]
+            pub const fn padding_inward(mut self, padding: f64) -> Self {
+                self.$path.inward = padding;
+                self
+            }
+
+            #[must_use]
+            pub const fn padding_outward(mut self, padding: f64) -> Self {
+                self.$path.outward = padding;
+                self
+            }
+
+            #[must_use]
+            pub const fn padding_cross(mut self, padding: f64) -> Self {
+                self.$path.cross = padding;
+                self
+            }
+
+            #[must_use]
+            pub const fn padding_main(self, padding: f64) -> Self {
+                self.padding_outward(padding).padding_inward(padding)
+            }
+        };
     }
 }

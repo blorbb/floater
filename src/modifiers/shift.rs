@@ -1,6 +1,6 @@
 use self::limiter::{attached, Attached, ShiftLimiter};
 use super::{Modifier, ModifierReturn, ModifierState, Padding};
-use crate::{geometry::Side, space::space_around};
+use crate::{geometry::Side, impl_padding_builder, space::space_around};
 
 // TODO: option for shifting perpendicular to the side, use with the limiter
 // so that it only shifts away from
@@ -8,7 +8,7 @@ use crate::{geometry::Side, space::space_around};
 #[must_use]
 pub fn shift() -> Shift<Attached> {
     Shift {
-        padding: 0.0.into(),
+        padding: Padding::splat(0.0),
         limiter: attached(0.0),
     }
 }
@@ -19,11 +19,7 @@ pub struct Shift<L> {
 }
 
 impl<L> Shift<L> {
-    #[must_use]
-    pub fn padding(mut self, padding: impl Into<Padding>) -> Self {
-        self.padding = padding.into();
-        self
-    }
+    impl_padding_builder!(padding);
 
     #[must_use]
     pub fn limiter<U: ShiftLimiter>(self, limiter: U) -> Shift<U> {
@@ -46,10 +42,10 @@ impl<L: ShiftLimiter> Modifier for Shift<L> {
 
         for side in side.adjacents() {
             let space_on_side = space.on_side(side);
-            if space_on_side < self.padding.sideways {
+            if space_on_side < self.padding.cross {
                 let mut new_point = floater.point();
-                let shift_amount = space_on_side - self.padding.sideways;
-                *new_point.coord_across_mut(side) += match side {
+                let shift_amount = space_on_side - self.padding.cross;
+                *new_point.coord_main_mut(side) += match side {
                     Side::Top | Side::Left => -shift_amount,
                     Side::Bottom | Side::Right => shift_amount,
                 };

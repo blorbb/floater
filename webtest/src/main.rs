@@ -3,7 +3,7 @@
 use floater::{
     compute_position,
     geometry::{ElemRect, ElemSize, Side},
-    modifiers::{arrow, arrow::ArrowData, flip, offset, shift, shift::limiter, Padding},
+    modifiers::{arrow, arrow::ArrowData, flip, offset, shift, shift::limiter},
     PositionOpts,
 };
 use leptos::*;
@@ -97,19 +97,15 @@ fn Single() -> impl IntoView {
                     .add_modifier(
                         do_flip.then_some(
                             &mut flip()
-                                .padding(Padding {
-                                    outward: 20.0,
-                                    sideways: 5.0,
-                                })
-                                .flip_to_side(true),
+                                .padding_outward(20.0)
+                                .padding_cross(5.0)
+                                .flip_cross(true),
                         ),
                     )
                     .add_modifier(
                         &mut shift()
-                            .padding(Padding {
-                                outward: 20.0,
-                                sideways: 5.0,
-                            })
+                            .padding_outward(20.0)
+                            .padding_cross(5.0)
                             // should be arrow size + sideways padding (+ arrow padding)
                             .limiter(limiter::attached(20.0)),
                     )
@@ -196,16 +192,11 @@ fn Diamond(s: Side) -> impl IntoView {
                 container,
                 PositionOpts::new()
                     .with_side(s)
-                    .add_modifier(&mut flip().padding(Padding {
-                        outward: 20.0,
-                        sideways: 5.0,
-                    }))
+                    .add_modifier(&mut flip().padding_outward(20.0).padding_cross(5.0))
                     .add_modifier(
                         &mut shift()
-                            .padding(Padding {
-                                outward: 20.0,
-                                sideways: 5.0,
-                            })
+                            .padding_outward(20.0)
+                            .padding_cross(5.0)
                             .limiter(limiter::attached(20.0)),
                     )
                     .add_modifier(&mut offset(15.0))

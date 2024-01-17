@@ -50,10 +50,10 @@ impl<'a> Modifier for Arrow<'a> {
     ) -> ModifierReturn {
         // !! coordinates are working as if its positioning the *center* of the arrow
 
-        let ideal_center = floater.size().dim_along(*side) / 2.0;
+        let ideal_center = floater.size().dim_cross(*side) / 2.0;
 
         let shifted_amount =
-            floater.center().coord_along(*side) - reference.center().coord_along(*side);
+            floater.center().coord_cross(*side) - reference.center().coord_cross(*side);
 
         // saturate at 0 in case padding > tooltip size, avoids panic in the clamp
         let max_shift = (ideal_center - self.inline_len / 2.0 - self.padding).max(0.0);

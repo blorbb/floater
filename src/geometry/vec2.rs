@@ -17,7 +17,7 @@ impl Vec2 {
     ///
     /// left/right => y, top/bottom => x.
     #[must_use]
-    pub const fn coord_along(&self, side: Side) -> f64 {
+    pub const fn coord_cross(&self, side: Side) -> f64 {
         match side.orientation() {
             Orientation::Horizontal => self.x,
             Orientation::Vertical => self.y,
@@ -28,7 +28,7 @@ impl Vec2 {
     /// the provided side.
     ///
     /// left/right => y, top/bottom => x.
-    pub fn coord_along_mut(&mut self, side: Side) -> &mut f64 {
+    pub fn coord_cross_mut(&mut self, side: Side) -> &mut f64 {
         match side.orientation() {
             Orientation::Horizontal => &mut self.x,
             Orientation::Vertical => &mut self.y,
@@ -40,7 +40,7 @@ impl Vec2 {
     ///
     /// left/right => x, top/bottom => y.
     #[must_use]
-    pub const fn coord_across(&self, side: Side) -> f64 {
+    pub const fn coord_main(&self, side: Side) -> f64 {
         match side.orientation() {
             Orientation::Vertical => self.x,
             Orientation::Horizontal => self.y,
@@ -51,7 +51,7 @@ impl Vec2 {
     /// perpendicular to the provided side.
     ///
     /// left/right => x, top/bottom => y.
-    pub fn coord_across_mut(&mut self, side: Side) -> &mut f64 {
+    pub fn coord_main_mut(&mut self, side: Side) -> &mut f64 {
         match side.orientation() {
             Orientation::Vertical => &mut self.x,
             Orientation::Horizontal => &mut self.y,
