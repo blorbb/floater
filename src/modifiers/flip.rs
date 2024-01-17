@@ -1,7 +1,11 @@
 use super::{Modifier, ModifierState};
 use crate::{
-    compute_position_from_placement, geometry::ElemRect, impl_padding_builder,
-    modifiers::ModifierReturn, padding::Padding, space::space_around,
+    compute_position_from_placement,
+    geometry::{ElemRect, Side, Vec2},
+    impl_padding_builder,
+    modifiers::ModifierReturn,
+    padding::Padding,
+    space::{space_around, SpaceAround},
 };
 
 // TODO: flip to side, option to flip to most space as fallback
@@ -14,7 +18,17 @@ pub fn flip() -> Flip {
         check_main_axis: true,
         check_cross_axis: false,
         padding: Padding::default(),
+        fallback_method: FallbackMethod::default(),
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum FallbackMethod {
+    /// Go back to the initial side if none fully fit.
+    Initial,
+    /// Choose the best fitting side if none fully fit.
+    #[default]
+    BestFit,
 }
 
 pub struct Flip {
@@ -23,6 +37,7 @@ pub struct Flip {
     check_main_axis: bool,
     check_cross_axis: bool,
     padding: Padding,
+    fallback_method: FallbackMethod,
 }
 
 impl Flip {
@@ -54,6 +69,13 @@ impl Flip {
         self
     }
 
+    /// Which fallback method to use if no sides can fit the floater.
+    #[must_use]
+    pub const fn fallback_method(mut self, f: FallbackMethod) -> Self {
+        self.fallback_method = f;
+        self
+    }
+
     impl_padding_builder!(padding);
 }
 
@@ -76,28 +98,51 @@ impl Modifier for Flip {
             fallbacks
         };
 
+        let mut space_info: Vec<(Side, SpaceAround, Vec2)> = Vec::new();
+
         for side in fallbacks {
             let new_pos = compute_position_from_placement(*reference, floater.size(), side);
             let new_floater = ElemRect::from_parts(new_pos, floater.size());
             let space = space_around(&new_floater, container);
 
-            // check if they are satisfactory
-            if self.check_main_axis && space.on_side(side) < self.padding.outward {
-                continue;
-            }
-            if self.check_cross_axis
-                && side
-                    .adjacents()
-                    .any(|side| space.on_side(side) < self.padding.cross)
+            if (self.check_main_axis && space.on_side(side) < self.padding.outward)
+                || (self.check_cross_axis
+                    && side
+                        .adjacents()
+                        .any(|side| space.on_side(side) < self.padding.cross))
             {
+                // push in here to avoid unnecessary allocation if the first side works fine
+                space_info.push((side, space, new_pos));
                 continue;
             }
-            // is satisfactory: use this side
+
+            // enough space: use this side
             return ModifierReturn::new().point(new_pos).side(side);
         }
 
-        // falback to the initial placement
+        match self.fallback_method {
+            FallbackMethod::Initial => ModifierReturn::new(),
+            FallbackMethod::BestFit => {
+                // score the best fit by the sides that have the least amount of overflow.
+                // each score should be negative, with the magnitude indicating the total amount
+                // of overflow.
+                let scores = space_info.iter().map(|(_, space, _)| {
+                    space
+                        .on_all_sides()
+                        .filter(|space| *space < 0.0)
+                        .sum::<f64>()
+                });
 
-        ModifierReturn::new()
+                let best_fit_index = scores
+                    .enumerate()
+                    .max_by(|a, b| a.1.total_cmp(&b.1))
+                    .expect("should have at least one fallback side")
+                    .0;
+
+                let (best_side, _, best_point) = space_info[best_fit_index];
+
+                ModifierReturn::new().side(best_side).point(best_point)
+            }
+        }
     }
 }

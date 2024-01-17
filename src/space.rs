@@ -3,6 +3,7 @@ use crate::{geometry::ElemRect, Side};
 /// Positive = overflowing by `amount` pixels.
 /// Negative = `amount` pixels left to the boundary.
 /// 0 = flush with the boundary.
+#[derive(Debug, Clone, Copy)]
 pub struct SpaceAround {
     pub left: f64,
     pub top: f64,
@@ -23,6 +24,14 @@ impl SpaceAround {
 
     #[must_use]
     pub fn min(&self) -> f64 { self.left.min(self.top).min(self.right).min(self.bottom) }
+
+    /// Returns the space on all four sides.
+    ///
+    /// You should not rely on the order of the values.
+    #[must_use]
+    pub fn on_all_sides(&self) -> std::array::IntoIter<f64, 4> {
+        [self.left, self.top, self.right, self.bottom].into_iter()
+    }
 }
 
 #[must_use]
