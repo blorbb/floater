@@ -1,6 +1,6 @@
 use self::limiter::{attached, Attached, ShiftLimiter};
-use super::{Modifier, ModifierReturn, ModifierState, Padding};
-use crate::{geometry::Side, impl_padding_builder, space::space_around};
+use super::{Modifier, ModifierReturn, ModifierState};
+use crate::{geometry::Side, impl_padding_builder, padding::Padding, space::space_around};
 
 // TODO: option for shifting perpendicular to the side, use with the limiter
 // so that it only shifts away from

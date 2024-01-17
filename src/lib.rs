@@ -3,6 +3,7 @@ pub mod modifiers;
 pub mod space;
 #[cfg(feature = "web-utils")]
 pub mod web;
+pub mod padding;
 
 use geometry::{ElemRect, ElemSize, Side, Vec2};
 use modifiers::{Modifier, ModifierState, Modifiers};

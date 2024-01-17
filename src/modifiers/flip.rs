@@ -1,7 +1,7 @@
-use super::{Modifier, ModifierState, Padding};
+use super::{Modifier, ModifierState};
 use crate::{
-    compute_position_from_placement, geometry::ElemRect, modifiers::ModifierReturn,
-    space::space_around, impl_padding_builder,
+    compute_position_from_placement, geometry::ElemRect, impl_padding_builder,
+    modifiers::ModifierReturn, padding::Padding, space::space_around,
 };
 
 // TODO: flip to side, option to flip to most space as fallback
