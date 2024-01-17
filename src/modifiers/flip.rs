@@ -11,6 +11,8 @@ pub fn flip() -> Flip {
     Flip {
         flip_main: true,
         flip_cross: false,
+        check_main_axis: true,
+        check_cross_axis: false,
         padding: Padding::default(),
     }
 }
@@ -18,6 +20,8 @@ pub fn flip() -> Flip {
 pub struct Flip {
     flip_main: bool,
     flip_cross: bool,
+    check_main_axis: bool,
+    check_cross_axis: bool,
     padding: Padding,
 }
 
@@ -38,6 +42,18 @@ impl Flip {
         self
     }
 
+    #[must_use]
+    pub const fn check_main_axis(mut self, b: bool) -> Self {
+        self.check_main_axis = b;
+        self
+    }
+
+    #[must_use]
+    pub const fn check_cross_axis(mut self, b: bool) -> Self {
+        self.check_cross_axis = b;
+        self
+    }
+
     impl_padding_builder!(padding);
 }
 
@@ -52,34 +68,36 @@ impl Modifier for Flip {
             ..
         }: &ModifierState,
     ) -> ModifierReturn {
-        // has enough space, no need to flip
-        if space_around(floater, container).on_side(*side) > self.padding.outward {
-            return ModifierReturn::new();
-        }
+        let fallbacks = {
+            let mut fallbacks = vec![*side];
+            // TODO: more configurable fallback options
+            self.flip_main.then(|| fallbacks.push(side.opposite()));
+            self.flip_cross.then(|| fallbacks.extend(side.adjacents()));
+            fallbacks
+        };
 
-        // try flip across
-        if self.flip_main {
-            let opp = side.opposite();
-            let new_pos = compute_position_from_placement(*reference, floater.size(), opp);
+        for side in fallbacks {
+            let new_pos = compute_position_from_placement(*reference, floater.size(), side);
             let new_floater = ElemRect::from_parts(new_pos, floater.size());
+            let space = space_around(&new_floater, container);
 
-            if space_around(&new_floater, container).on_side(opp) > self.padding.outward {
-                return ModifierReturn::new().point(new_floater.point()).side(opp);
+            // check if they are satisfactory
+            if self.check_main_axis && space.on_side(side) < self.padding.outward {
+                continue;
             }
+            if self.check_cross_axis
+                && side
+                    .adjacents()
+                    .into_iter()
+                    .any(|side| space.on_side(side) < self.padding.cross)
+            {
+                continue;
+            }
+            // is satisfactory: use this side
+            return ModifierReturn::new().point(new_pos).side(side);
         }
 
-        // TODO: this only happens if the space in the outer direction is not enough.
-        // add a setting (crossAxis in floating-ui) of whether to check sideways.
-        if self.flip_cross {
-            for side in side.adjacents() {
-                let new_pos = compute_position_from_placement(*reference, floater.size(), side);
-                let new_floater = ElemRect::from_parts(new_pos, floater.size());
-
-                if space_around(&new_floater, container).on_side(side) > self.padding.outward {
-                    return ModifierReturn::new().point(new_floater.point()).side(side);
-                }
-            }
-        }
+        // falback to the initial placement
 
         ModifierReturn::new()
     }

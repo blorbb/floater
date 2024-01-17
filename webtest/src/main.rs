@@ -99,7 +99,8 @@ fn Single() -> impl IntoView {
                             &mut flip()
                                 .padding_outward(20.0)
                                 .padding_cross(5.0)
-                                .flip_cross(true),
+                                .flip_cross(true)
+                                .check_cross_axis(true),
                         ),
                     )
                     .add_modifier(
