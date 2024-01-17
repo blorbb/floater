@@ -88,7 +88,6 @@ impl Modifier for Flip {
             if self.check_cross_axis
                 && side
                     .adjacents()
-                    .into_iter()
                     .any(|side| space.on_side(side) < self.padding.cross)
             {
                 continue;

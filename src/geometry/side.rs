@@ -44,7 +44,9 @@ impl Side {
     /// Returns the two sides adjacent to the current. This will be in the order
     /// of the side anticlockwise, then clockwise.
     #[must_use]
-    pub const fn adjacents(self) -> [Self; 2] { [self.anticlockwise(), self.clockwise()] }
+    pub fn adjacents(self) -> std::array::IntoIter<Side, 2> {
+        [self.anticlockwise(), self.clockwise()].into_iter()
+    }
 
     /// Returns the orientation of a side.
     ///
