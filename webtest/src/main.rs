@@ -94,10 +94,16 @@ fn Single() -> impl IntoView {
                 container,
                 PositionOpts::new()
                     .with_side(Side::Top)
-                    .add_modifier(do_flip.then_some(&mut flip().padding(Padding {
-                        outward: 20.0,
-                        sideways: 5.0,
-                    })))
+                    .add_modifier(
+                        do_flip.then_some(
+                            &mut flip()
+                                .padding(Padding {
+                                    outward: 20.0,
+                                    sideways: 5.0,
+                                })
+                                .flip_to_side(true),
+                        ),
+                    )
                     .add_modifier(
                         &mut shift()
                             .padding(Padding {

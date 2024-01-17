@@ -73,9 +73,19 @@ impl Modifier for Flip {
             }
         }
 
+        // TODO: this only happens if the space in the outer direction is not enough.
+        // add a setting (crossAxis in floating-ui) of whether to check sideways.
         if self.flip_to_side {
-            todo!()
+            for side in side.adjacents() {
+                let new_pos = compute_position_from_placement(*reference, floater.size(), side);
+                let new_floater = ElemRect::from_parts(new_pos, floater.size());
+
+                if space_around(&new_floater, container).on_side(side) > self.padding.outward {
+                    return ModifierReturn::new().point(new_floater.point()).side(side);
+                }
+            }
         }
+
         ModifierReturn::new()
     }
 }
