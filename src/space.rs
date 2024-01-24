@@ -23,6 +23,16 @@ impl SpaceAround {
     }
 
     #[must_use]
+    pub fn on_side_mut(&mut self, side: Side) -> &mut f64 {
+        match side {
+            Side::Left => &mut self.left,
+            Side::Top => &mut self.top,
+            Side::Right => &mut self.right,
+            Side::Bottom => &mut self.bottom,
+        }
+    }
+
+    #[must_use]
     pub fn min(&self) -> f64 { self.left.min(self.top).min(self.right).min(self.bottom) }
 
     /// Returns the space on all four sides.

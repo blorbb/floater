@@ -6,6 +6,8 @@ pub mod shift;
 pub use shift::shift;
 pub mod arrow;
 pub use arrow::arrow;
+pub mod resize;
+pub use resize::resize;
 
 // nesting all the modifier stuff into a module so that `modifiers::*` don't
 // have access to private fields

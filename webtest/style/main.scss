@@ -8,7 +8,7 @@
 // }
 
 p {
-    margin: 4rem 15rem;
+    margin: 4rem 30rem;
 }
 
 .tooltip {
@@ -16,8 +16,13 @@ p {
     width: max-content;
     top: 0;
     left: 0;
-    background-color: grey;
+}
+
+.tooltip-contents {
+    height: 100%;
     padding: 1ex 1em;
+    overflow-y: auto;
+    background-color: grey;
     border-radius: 2px;
 }
 
@@ -59,8 +64,8 @@ p {
 }
 
 .scrolling {
-    width: 200px;
-    height: 200px;
+    width: 400px;
+    height: 400px;
     border: 1px solid black;
     position: relative;
     overflow: auto;
