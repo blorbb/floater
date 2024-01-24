@@ -1,6 +1,6 @@
 use std::ops;
 
-use super::{side::Orientation, Side};
+use super::{side::Axis, Side};
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Vec2 {
@@ -18,9 +18,9 @@ impl Vec2 {
     /// left/right => y, top/bottom => x.
     #[must_use]
     pub const fn coord_cross(&self, side: Side) -> f64 {
-        match side.orientation() {
-            Orientation::Horizontal => self.x,
-            Orientation::Vertical => self.y,
+        match side.axis() {
+            Axis::Vertical => self.x,
+            Axis::Horizontal => self.y,
         }
     }
 
@@ -29,9 +29,9 @@ impl Vec2 {
     ///
     /// left/right => y, top/bottom => x.
     pub fn coord_cross_mut(&mut self, side: Side) -> &mut f64 {
-        match side.orientation() {
-            Orientation::Horizontal => &mut self.x,
-            Orientation::Vertical => &mut self.y,
+        match side.axis() {
+            Axis::Vertical => &mut self.x,
+            Axis::Horizontal => &mut self.y,
         }
     }
 
@@ -41,9 +41,9 @@ impl Vec2 {
     /// left/right => x, top/bottom => y.
     #[must_use]
     pub const fn coord_main(&self, side: Side) -> f64 {
-        match side.orientation() {
-            Orientation::Vertical => self.x,
-            Orientation::Horizontal => self.y,
+        match side.axis() {
+            Axis::Horizontal => self.x,
+            Axis::Vertical => self.y,
         }
     }
 
@@ -52,9 +52,9 @@ impl Vec2 {
     ///
     /// left/right => x, top/bottom => y.
     pub fn coord_main_mut(&mut self, side: Side) -> &mut f64 {
-        match side.orientation() {
-            Orientation::Vertical => &mut self.x,
-            Orientation::Horizontal => &mut self.y,
+        match side.axis() {
+            Axis::Horizontal => &mut self.x,
+            Axis::Vertical => &mut self.y,
         }
     }
 }

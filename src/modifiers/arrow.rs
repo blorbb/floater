@@ -1,6 +1,6 @@
 use super::{Modifier, ModifierState, StateUpdate};
 #[cfg(feature = "web-utils")]
-use crate::geometry::{side::Orientation, Side};
+use crate::geometry::{side::Axis, Side};
 
 /// The arrow element should be inside the floater element, where both floater
 /// and arrow has `position: absolute`.
@@ -150,9 +150,9 @@ impl ArrowData {
         let outset_property = arrow_side.as_css_prop();
 
         // this will never be the same as outset_property
-        let offset_property = match arrow_side.orientation() {
-            Orientation::Horizontal => "left",
-            Orientation::Vertical => "top",
+        let offset_property = match arrow_side.axis() {
+            Axis::Vertical => "left",
+            Axis::Horizontal => "top",
         };
 
         let rotation = match arrow_side {

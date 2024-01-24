@@ -1,8 +1,6 @@
-/// One of the four edges of a rectangle.
+/// One of the four sides of a rectangle.
 ///
-/// Note that this should be describing an *edge*, not a direction. For example,
-/// the [`Orientation`] describes the axis of the edge, not the direction from
-/// the center to that edge.
+/// Also used as a direction.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum Side {
     Left,
@@ -53,14 +51,14 @@ impl Side {
         [self.anticlockwise(), self.clockwise()].into_iter()
     }
 
-    /// Returns the orientation of a side.
+    /// Returns the axis a side points toward.
     ///
-    /// Left/right => vertical, top/bottom => horizontal.
+    /// Left/right => horizontal, top/bottom => vertical.
     #[must_use]
-    pub const fn orientation(self) -> Orientation {
+    pub const fn axis(self) -> Axis {
         match self {
-            Self::Left | Self::Right => Orientation::Vertical,
-            Self::Top | Self::Bottom => Orientation::Horizontal,
+            Self::Left | Self::Right => Axis::Horizontal,
+            Self::Top | Self::Bottom => Axis::Vertical,
         }
     }
 
@@ -78,10 +76,10 @@ impl Side {
     }
 }
 
-/// The orientation of a [`Side`], either horizontal or vertical.
+/// The direction a [`Side`] points toward, either horizontal or vertical.
 ///
-/// Created by [`Side::orientation`].
-pub enum Orientation {
-    Horizontal,
+/// Created by [`Side::axis`].
+pub enum Axis {
     Vertical,
+    Horizontal,
 }

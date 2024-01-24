@@ -1,7 +1,7 @@
 use super::{Modifier, ModifierState, StateUpdate};
 use crate::{
     compute_placement_position,
-    geometry::{side::Orientation, ElemRect, ElemSize, Side},
+    geometry::{side::Axis, ElemRect, ElemSize, Side},
     impl_padding_builder,
     padding::Padding,
     space::space_around,
@@ -55,12 +55,12 @@ impl<F: FnMut(&ResizeState) -> ElemSize> Modifier for Resize<F> {
 
         *space.on_side_mut(side.opposite()) -= invalid_space;
 
-        let (padding_width, padding_height) = match side.orientation() {
-            Orientation::Horizontal => (
+        let (padding_width, padding_height) = match side.axis() {
+            Axis::Vertical => (
                 self.padding.cross,
                 self.padding.outward + self.padding.inward,
             ),
-            Orientation::Vertical => (
+            Axis::Horizontal => (
                 self.padding.outward + self.padding.inward,
                 self.padding.cross,
             ),
