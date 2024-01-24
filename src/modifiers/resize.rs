@@ -1,6 +1,6 @@
-use super::{Modifier, ModifierReturn, ModifierState};
+use super::{Modifier, ModifierState, StateUpdate};
 use crate::{
-    compute_position_from_placement,
+    compute_placement_position,
     geometry::{side::Orientation, ElemRect, ElemSize, Side},
     impl_padding_builder,
     padding::Padding,
@@ -36,7 +36,7 @@ impl<F> Resize<F> {
 }
 
 impl<F: FnMut(&ResizeState) -> ElemSize> Modifier for Resize<F> {
-    fn run(&mut self, state: &ModifierState) -> ModifierReturn {
+    fn run(&mut self, state: &ModifierState) -> StateUpdate {
         let ModifierState {
             reference,
             floater,
@@ -76,9 +76,9 @@ impl<F: FnMut(&ResizeState) -> ElemSize> Modifier for Resize<F> {
             state: *state,
         });
 
-        let new_floater_pos = compute_position_from_placement(reference, new_size, side);
+        let new_floater_pos = compute_placement_position(reference, new_size, side);
         let new_floater = ElemRect::from_parts(new_floater_pos, new_size);
 
-        ModifierReturn::new().floater(new_floater)
+        StateUpdate::new().floater(new_floater)
     }
 }

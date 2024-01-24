@@ -1,3 +1,8 @@
+/// One of the four edges of a rectangle.
+///
+/// Note that this should be describing an *edge*, not a direction. For example,
+/// the [`Orientation`] describes the axis of the edge, not the direction from
+/// the center to that edge.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum Side {
     Left,
@@ -44,7 +49,7 @@ impl Side {
     /// Returns the two sides adjacent to the current. This will be in the order
     /// of the side anticlockwise, then clockwise.
     #[must_use]
-    pub fn adjacents(self) -> std::array::IntoIter<Side, 2> {
+    pub fn adjacents(self) -> std::array::IntoIter<Self, 2> {
         [self.anticlockwise(), self.clockwise()].into_iter()
     }
 

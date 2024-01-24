@@ -4,14 +4,14 @@ use crate::{geometry::ElemRect, Side};
 /// Negative = `amount` pixels left to the boundary.
 /// 0 = flush with the boundary.
 #[derive(Debug, Clone, Copy)]
-pub struct SpaceAround {
+pub struct Space {
     pub left: f64,
     pub top: f64,
     pub right: f64,
     pub bottom: f64,
 }
 
-impl SpaceAround {
+impl Space {
     #[must_use]
     pub const fn on_side(&self, side: Side) -> f64 {
         match side {
@@ -45,8 +45,8 @@ impl SpaceAround {
 }
 
 #[must_use]
-pub fn space_around(rect: &ElemRect, container: &ElemRect) -> SpaceAround {
-    SpaceAround {
+pub fn space_around(rect: &ElemRect, container: &ElemRect) -> Space {
+    Space {
         left: rect.left() - container.left(),
         top: rect.top() - container.top(),
         right: container.right() - rect.right(),

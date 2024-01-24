@@ -1,9 +1,9 @@
 pub mod geometry;
 pub mod modifiers;
+pub mod padding;
 pub mod space;
 #[cfg(feature = "web-utils")]
 pub mod web;
-pub mod padding;
 
 use geometry::{ElemRect, ElemSize, Side, Vec2};
 use modifiers::{Modifier, ModifierState, Modifiers};
@@ -52,7 +52,7 @@ pub struct PositionInfo {
 /// This is intended to only be used by modifiers - use [`compute_position`]
 /// otherwise.
 #[must_use]
-pub fn compute_position_from_placement(reference: ElemRect, floater: ElemSize, side: Side) -> Vec2 {
+pub fn compute_placement_position(reference: ElemRect, floater: ElemSize, side: Side) -> Vec2 {
     let x = match side {
         Side::Top | Side::Bottom => reference.center().x - floater.width() / 2.0,
         Side::Left => reference.left() - floater.width(),
@@ -80,7 +80,7 @@ pub fn compute_position(
     container: ElemRect,
     opts: PositionOpts,
 ) -> PositionInfo {
-    let point = compute_position_from_placement(reference, floater, opts.side);
+    let point = compute_placement_position(reference, floater, opts.side);
 
     let mut state = ModifierState::new(
         reference,

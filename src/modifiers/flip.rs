@@ -1,14 +1,12 @@
 use super::{Modifier, ModifierState};
 use crate::{
-    compute_position_from_placement,
+    compute_placement_position,
     geometry::{ElemRect, Side, Vec2},
     impl_padding_builder,
-    modifiers::ModifierReturn,
+    modifiers::StateUpdate,
     padding::Padding,
-    space::{space_around, SpaceAround},
+    space::{space_around, Space},
 };
-
-// TODO: flip to side, option to flip to most space as fallback
 
 #[must_use]
 pub fn flip() -> Flip {
@@ -31,6 +29,7 @@ pub enum FallbackMethod {
     BestFit,
 }
 
+#[allow(clippy::struct_excessive_bools)]
 pub struct Flip {
     flip_main: bool,
     flip_cross: bool,
@@ -89,7 +88,7 @@ impl Modifier for Flip {
             side,
             ..
         }: &ModifierState,
-    ) -> ModifierReturn {
+    ) -> StateUpdate {
         let fallbacks = {
             let mut fallbacks = vec![*side];
             // TODO: more configurable fallback options
@@ -98,10 +97,10 @@ impl Modifier for Flip {
             fallbacks
         };
 
-        let mut space_info: Vec<(Side, SpaceAround, Vec2)> = Vec::new();
+        let mut space_info: Vec<(Side, Space, Vec2)> = Vec::new();
 
         for side in fallbacks {
-            let new_pos = compute_position_from_placement(*reference, floater.size(), side);
+            let new_pos = compute_placement_position(*reference, floater.size(), side);
             let new_floater = ElemRect::from_parts(new_pos, floater.size());
             let space = space_around(&new_floater, container);
 
@@ -117,11 +116,11 @@ impl Modifier for Flip {
             }
 
             // enough space: use this side
-            return ModifierReturn::new().point(new_pos).side(side);
+            return StateUpdate::new().point(new_pos).side(side);
         }
 
         match self.fallback_method {
-            FallbackMethod::Initial => ModifierReturn::new(),
+            FallbackMethod::Initial => StateUpdate::new(),
             FallbackMethod::BestFit => {
                 // score the best fit by the sides that have the least amount of overflow.
                 // each score should be negative, with the magnitude indicating the total amount
@@ -141,7 +140,7 @@ impl Modifier for Flip {
 
                 let (best_side, _, best_point) = space_info[best_fit_index];
 
-                ModifierReturn::new().side(best_side).point(best_point)
+                StateUpdate::new().side(best_side).point(best_point)
             }
         }
     }

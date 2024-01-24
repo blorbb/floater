@@ -1,10 +1,11 @@
 use self::limiter::{attached, Attached, ShiftLimiter};
-use super::{Modifier, ModifierReturn, ModifierState};
+use super::{Modifier, ModifierState, StateUpdate};
 use crate::{geometry::Side, impl_padding_builder, padding::Padding, space::space_around};
 
 // TODO: option for shifting perpendicular to the side, use with the limiter
 // so that it only shifts away from
 
+#[allow(clippy::missing_const_for_fn)]
 #[must_use]
 pub fn shift() -> Shift<Attached> {
     Shift {
@@ -31,7 +32,7 @@ impl<L> Shift<L> {
 }
 
 impl<L: ShiftLimiter> Modifier for Shift<L> {
-    fn run(&mut self, state: &ModifierState) -> ModifierReturn {
+    fn run(&mut self, state: &ModifierState) -> StateUpdate {
         let ModifierState {
             floater,
             container,
@@ -55,11 +56,11 @@ impl<L: ShiftLimiter> Modifier for Shift<L> {
                 *curr_state.floater.point_mut() = new_point;
                 new_point = self.limiter.reshift(&curr_state);
 
-                return ModifierReturn::new().point(new_point);
+                return StateUpdate::new().point(new_point);
             }
         }
 
-        ModifierReturn::new()
+        StateUpdate::new()
     }
 }
 

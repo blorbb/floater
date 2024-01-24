@@ -12,8 +12,8 @@ impl Vec2 {
     #[must_use]
     pub const fn new(x: f64, y: f64) -> Self { Self { x, y } }
 
-    /// Returns the component of the coordinate that is in the direction along
-    /// the provided side.
+    /// Returns the component of the coordinate that is in the direction
+    /// parallel to the provided side.
     ///
     /// left/right => y, top/bottom => x.
     #[must_use]
@@ -24,8 +24,8 @@ impl Vec2 {
         }
     }
 
-    /// Returns the component of the coordinate that is in the direction along
-    /// the provided side.
+    /// Returns the component of the coordinate that is in the direction
+    /// parallel to the provided side.
     ///
     /// left/right => y, top/bottom => x.
     pub fn coord_cross_mut(&mut self, side: Side) -> &mut f64 {

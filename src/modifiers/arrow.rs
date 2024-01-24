@@ -1,4 +1,5 @@
-use super::{Modifier, ModifierReturn, ModifierState};
+use super::{Modifier, ModifierState, StateUpdate};
+#[cfg(feature = "web-utils")]
 use crate::geometry::{side::Orientation, Side};
 
 /// The arrow element should be inside the floater element, where both floater
@@ -47,7 +48,7 @@ impl<'a> Modifier for Arrow<'a> {
             side,
             ..
         }: &ModifierState,
-    ) -> ModifierReturn {
+    ) -> StateUpdate {
         // !! coordinates are working as if its positioning the *center* of the arrow
 
         let ideal_center = floater.size().dim_cross(*side) / 2.0;
@@ -69,7 +70,7 @@ impl<'a> Modifier for Arrow<'a> {
             center_offset: (ideal_center - skid).abs(),
         };
 
-        ModifierReturn::new()
+        StateUpdate::new()
     }
 }
 

@@ -1,9 +1,9 @@
-use super::{Modifier, ModifierReturn, ModifierState};
+use super::{Modifier, ModifierState, StateUpdate};
 use crate::geometry::Side;
 
 #[must_use]
 pub fn offset(amount: f64) -> impl Modifier {
-    move |ModifierState { floater, side, .. }: &_| -> ModifierReturn {
+    move |ModifierState { floater, side, .. }: &_| -> StateUpdate {
         let pos = floater;
         let (x, y) = match side {
             Side::Left => (pos.x() - amount, pos.y()),
@@ -12,6 +12,6 @@ pub fn offset(amount: f64) -> impl Modifier {
             Side::Bottom => (pos.x(), pos.y() + amount),
         };
 
-        ModifierReturn::new().point_xy(x, y)
+        StateUpdate::new().point_xy(x, y)
     }
 }

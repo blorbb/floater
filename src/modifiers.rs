@@ -53,7 +53,7 @@ mod nest {
             }
         }
 
-        pub fn update_with(&mut self, res: &ModifierReturn) {
+        pub fn update_with(&mut self, res: &StateUpdate) {
             if let Some(point) = res.point {
                 *self.floater.point_mut() = point;
             }
@@ -67,13 +67,13 @@ mod nest {
     }
 
     #[derive(Default)]
-    pub struct ModifierReturn {
+    pub struct StateUpdate {
         point: Option<Vec2>,
         size: Option<ElemSize>,
         side: Option<Side>,
     }
 
-    impl ModifierReturn {
+    impl StateUpdate {
         #[must_use]
         pub const fn new() -> Self {
             Self {
@@ -121,14 +121,14 @@ mod nest {
     }
 
     pub trait Modifier {
-        fn run(&mut self, state: &ModifierState) -> ModifierReturn;
+        fn run(&mut self, state: &ModifierState) -> StateUpdate;
     }
 
     impl<F> Modifier for F
     where
-        F: FnMut(&ModifierState) -> ModifierReturn,
+        F: FnMut(&ModifierState) -> StateUpdate,
     {
-        fn run(&mut self, state: &ModifierState) -> ModifierReturn { self(state) }
+        fn run(&mut self, state: &ModifierState) -> StateUpdate { self(state) }
     }
 
     pub struct Modifiers<'a>(Vec<&'a mut dyn Modifier>);
