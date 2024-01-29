@@ -209,14 +209,14 @@ fn Dropdown() -> impl IntoView {
                 PositionOpts::new()
                     .with_side(Side::Bottom)
                     .add_modifier(
-                        &mut resize(|state| {
+                        &mut resize(|available, state| {
                             logging::warn!("{state:?}");
                             let style = (*floater).style();
-                            let width = state.state.reference.width();
+                            let width = state.reference.width();
                             _ = style.set_property("width", &format!("{width}px"));
-                            let height = state.available.height().max(min_height);
+                            let height = available.height().max(min_height);
                             _ = style.set_property("height", &format!("{height}px"));
-                            ElemSize::new(state.state.reference.width(), height)
+                            ElemSize::new(state.reference.width(), height)
                         })
                         .padding_outward(20.0)
                         .padding_cross(5.0)

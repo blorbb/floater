@@ -13,7 +13,10 @@ use crate::{
 /// function should modify the real floater element and return the floater's new
 /// size. This allows you to apply a size on one axis, and have the platform
 /// recalculate the opposite axis' size.
-pub fn resize<F: FnMut(&ResizeState) -> ElemSize>(recalculator: F) -> Resize<F> {
+///
+/// The parameters passed in to the function are the available space (as an
+/// [`ElemSize`]; values may be negative) and the current modifier state.
+pub fn resize<F: FnMut(&ElemSize, &ModifierState) -> ElemSize>(recalculator: F) -> Resize<F> {
     Resize {
         padding: Padding::splat(0.0),
         recalculator,
@@ -25,17 +28,11 @@ pub struct Resize<F> {
     recalculator: F,
 }
 
-#[derive(Debug)]
-pub struct ResizeState {
-    pub available: ElemSize,
-    pub state: ModifierState,
-}
-
 impl<F> Resize<F> {
     impl_padding_builder!(padding);
 }
 
-impl<F: FnMut(&ResizeState) -> ElemSize> Modifier for Resize<F> {
+impl<F: FnMut(&ElemSize, &ModifierState) -> ElemSize> Modifier for Resize<F> {
     fn run(&mut self, state: &ModifierState) -> StateUpdate {
         let ModifierState {
             reference,
@@ -71,10 +68,7 @@ impl<F: FnMut(&ResizeState) -> ElemSize> Modifier for Resize<F> {
             space.top + space.bottom + floater.height() - padding_height,
         );
 
-        let new_size = (self.recalculator)(&ResizeState {
-            available: space,
-            state: *state,
-        });
+        let new_size = (self.recalculator)(&space, state);
 
         let new_floater_pos = compute_placement_position(reference, new_size, side);
         let new_floater = ElemRect::from_parts(new_floater_pos, new_size);
