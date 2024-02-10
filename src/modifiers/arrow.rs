@@ -109,7 +109,7 @@ impl ArrowData {
     ///
     /// ```text
     /// /* the element to put these styles on */
-    /// .arrow-pos {
+    /// .arrow-box {
     ///     position: absolute;
     ///     aspect-ratio: 1;
     /// }
@@ -121,8 +121,8 @@ impl ArrowData {
     /// }
     /// ```
     ///
-    /// The generated styles should then be set on the `.arrow-pos` element
-    /// above, using [`web_sys::CssStyleDeclaration::set_css_text`].
+    /// The generated styles are `(key, value)` pairs which should all be set on
+    /// the `.arrow-box` element above.
     ///
     /// The extra information required is:
     /// - `floater_side`: which side of the reference the **floater** is on.
@@ -145,7 +145,12 @@ impl ArrowData {
     #[allow(clippy::similar_names)]
     #[cfg(feature = "web-utils")]
     #[must_use]
-    pub fn generate_css_text(&self, floater_side: Side, arrow_size: f64, unit: &str) -> String {
+    pub fn generate_css_text(
+        &self,
+        floater_side: Side,
+        arrow_size: f64,
+        unit: &str,
+    ) -> [(&'static str, String); 3] {
         let arrow_side = floater_side.opposite();
         let outset_property = arrow_side.as_css_prop();
 
@@ -164,12 +169,10 @@ impl ArrowData {
 
         let offset = self.offset;
 
-        format!(
-            "\
-            {outset_property}: -{arrow_size}{unit};\
-            {offset_property}: {offset}{unit};\
-            transform: rotate({rotation});\
-            "
-        )
+        [
+            (outset_property, format!("-{arrow_size}{unit}")),
+            (offset_property, format!("{offset}{unit}")),
+            ("transform", format!("rotate({rotation})")),
+        ]
     }
 }

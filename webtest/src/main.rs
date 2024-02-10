@@ -17,7 +17,7 @@ fn main() { mount_to_body(App) }
 fn App() -> impl IntoView {
     console_error_panic_hook::set_once();
     mview! {
-        // Single;
+        Single;
         div.scrolling {
             div.padding-elem;
             Single;
@@ -128,12 +128,12 @@ fn Single() -> impl IntoView {
             tip_styles.set_property("top", &format!("{y}px")).ok()?;
             tip_styles.set_property("left", &format!("{x}px")).ok()?;
 
-            let arrow_styles = (*arrow_el).style();
-            arrow_styles.set_css_text(&arrow_data.generate_css_text(
-                side,
-                arrow_el.offset_width() as f64,
-                "px",
-            ))
+            arrow_data
+                .generate_css_text(side, arrow_el.offset_width() as f64, "px")
+                .into_iter()
+                .for_each(|(k, v)| {
+                    _ = arrow_el.clone().style(k, v);
+                });
         };
     });
 
@@ -243,12 +243,12 @@ fn Dropdown() -> impl IntoView {
             tip_styles.set_property("top", &format!("{y}px")).ok()?;
             tip_styles.set_property("left", &format!("{x}px")).ok()?;
 
-            let arrow_styles = (*arrow_el).style();
-            arrow_styles.set_css_text(&arrow_data.generate_css_text(
-                side,
-                arrow_el.offset_width() as f64,
-                "px",
-            ))
+            arrow_data
+                .generate_css_text(side, arrow_el.offset_width() as f64, "px")
+                .into_iter()
+                .for_each(|(k, v)| {
+                    _ = arrow_el.clone().style(k, v);
+                });
         };
     });
 
@@ -340,8 +340,12 @@ fn Diamond(s: Side) -> impl IntoView {
             tip_styles.set_property("top", &format!("{y}px")).ok()?;
             tip_styles.set_property("left", &format!("{x}px")).ok()?;
 
-            let arrow_styles = (*arrow_el).style();
-            arrow_styles.set_css_text(&arrow_data.generate_css_text(side, arrow_size.width(), "px"))
+            arrow_data
+                .generate_css_text(side, arrow_el.offset_width() as f64, "px")
+                .into_iter()
+                .for_each(|(k, v)| {
+                    _ = arrow_el.clone().style(k, v);
+                });
         };
     });
 

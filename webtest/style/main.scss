@@ -11,6 +11,12 @@ p {
     margin: 4rem 30rem;
 }
 
+.holder {
+    display: grid;
+    place-content: center;
+    margin: 200px;
+}
+
 .tooltip {
     position: absolute;
     width: max-content;

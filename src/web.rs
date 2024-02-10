@@ -1,6 +1,6 @@
-use web_sys::{DomRect, HtmlElement};
+use web_sys::{DomRect, Element, HtmlElement};
 
-use crate::geometry::ElemRect;
+use crate::geometry::{ElemRect, ElemSize};
 
 impl From<DomRect> for ElemRect {
     fn from(value: DomRect) -> Self {
@@ -42,5 +42,12 @@ impl ElemRect {
             f64::from(el.client_width()),
             f64::from(el.client_height()),
         )
+    }
+}
+
+impl ElemSize {
+    pub fn from_bounding_client_rect(el: &Element) -> Self {
+        let rect = el.get_bounding_client_rect();
+        Self::new(rect.width(), rect.height())
     }
 }
