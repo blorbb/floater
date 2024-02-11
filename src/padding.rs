@@ -1,4 +1,4 @@
-#[derive(Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct Padding {
     pub outward: f64,
     pub inward: f64,
@@ -16,12 +16,18 @@ impl Padding {
     }
 }
 
+impl From<f64> for Padding {
+    fn from(value: f64) -> Self {
+        Self::splat(value)
+    }
+}
+
 #[macro_export]
 macro_rules! impl_padding_builder {
     ($path:ident) => {
         #[must_use]
-        pub const fn padding(mut self, padding: f64) -> Self {
-            self.$path = $crate::padding::Padding::splat(padding);
+        pub fn padding(mut self, padding: impl Into<Padding>) -> Self {
+            self.$path = padding.into();
             self
         }
 
