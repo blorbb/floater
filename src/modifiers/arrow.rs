@@ -124,6 +124,10 @@ impl ArrowData {
     /// The generated styles are `(key, value)` pairs which should all be set on
     /// the `.arrow-box` element above.
     ///
+    /// Whether the inset properties set are top/bottom/left/right depends on
+    /// the side of the arrow. It is likely that you will also need to clear
+    /// all of these properties before setting the returned properties.
+    ///
     /// The extra information required is:
     /// - `floater_side`: which side of the reference the **floater** is on.
     ///   This is opposite to the direction the arrow will point, so that you
@@ -145,7 +149,7 @@ impl ArrowData {
     #[allow(clippy::similar_names)]
     #[cfg(feature = "web-utils")]
     #[must_use]
-    pub fn generate_css_text(
+    pub fn generate_css_props(
         &self,
         floater_side: Side,
         arrow_size: f64,

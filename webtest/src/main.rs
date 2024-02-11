@@ -129,7 +129,7 @@ fn Single() -> impl IntoView {
             tip_styles.set_property("left", &format!("{x}px")).ok()?;
 
             arrow_data
-                .generate_css_text(side, arrow_el.offset_width() as f64, "px")
+                .generate_css_props(side, arrow_el.offset_width() as f64, "px")
                 .into_iter()
                 .for_each(|(k, v)| {
                     _ = arrow_el.clone().style(k, v);
@@ -244,7 +244,7 @@ fn Dropdown() -> impl IntoView {
             tip_styles.set_property("left", &format!("{x}px")).ok()?;
 
             arrow_data
-                .generate_css_text(side, arrow_el.offset_width() as f64, "px")
+                .generate_css_props(side, arrow_el.offset_width() as f64, "px")
                 .into_iter()
                 .for_each(|(k, v)| {
                     _ = arrow_el.clone().style(k, v);
@@ -341,7 +341,7 @@ fn Diamond(s: Side) -> impl IntoView {
             tip_styles.set_property("left", &format!("{x}px")).ok()?;
 
             arrow_data
-                .generate_css_text(side, arrow_el.offset_width() as f64, "px")
+                .generate_css_props(side, arrow_el.offset_width() as f64, "px")
                 .into_iter()
                 .for_each(|(k, v)| {
                     _ = arrow_el.clone().style(k, v);
