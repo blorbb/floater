@@ -16,6 +16,9 @@ impl ElemSize {
     #[must_use]
     pub const fn height(&self) -> f64 { self.0.y }
 
+    pub fn width_mut(&mut self) -> &mut f64 { &mut self.0.x }
+    pub fn height_mut(&mut self) -> &mut f64 { &mut self.0.y }
+
     #[must_use]
     pub const fn as_vec2(&self) -> &Vec2 { &self.0 }
 

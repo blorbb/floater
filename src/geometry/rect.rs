@@ -55,6 +55,9 @@ impl ElemRect {
     pub fn x_mut(&mut self) -> &mut f64 { &mut self.point.x }
     pub fn y_mut(&mut self) -> &mut f64 { &mut self.point.y }
 
+    pub fn width_mut(&mut self) -> &mut f64 { self.size.width_mut() }
+    pub fn height_mut(&mut self) -> &mut f64 { self.size.height_mut() }
+
     #[must_use]
     pub fn center(&self) -> Vec2 {
         Vec2::new(
