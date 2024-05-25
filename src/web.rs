@@ -43,6 +43,11 @@ impl ElemRect {
             f64::from(el.client_height()),
         )
     }
+
+    pub fn from_bounding_client_rect(el: &Element) -> Self {
+        let rect = el.get_bounding_client_rect();
+        Self::new(rect.x(), rect.y(), rect.width(), rect.height())
+    }
 }
 
 impl ElemSize {

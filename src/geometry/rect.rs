@@ -1,10 +1,12 @@
+use core::fmt;
+
 use super::{size::ElemSize, Vec2};
 
 /// A rectangle placed on a viewport (scrolling context).
 ///
 /// Positive `x` goes right, positive `y` goes down. Width and height must be
 /// non-negative.
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Default, Clone, Copy)]
 pub struct ElemRect {
     point: Vec2,
     size: ElemSize,
@@ -61,12 +63,23 @@ impl ElemRect {
         )
     }
 
-    // pub fn intersect(&self, other: &Self) -> Self {
-    //     let left = self.x().max(other.x());
-    //     let top = self.y().max(other.y());
-    //     let right = self.right().min(other.right());
-    //     let bottom = self.bottom().min(other.bottom());
+    pub fn intersect(&self, other: &Self) -> Self {
+        let left = self.x().max(other.x());
+        let top = self.y().max(other.y());
+        let right = self.right().min(other.right());
+        let bottom = self.bottom().min(other.bottom());
 
-    //     Self::new(left, top, right - left, bottom - top)
-    // }
+        Self::new(left, top, right - left, bottom - top)
+    }
+}
+
+impl fmt::Debug for ElemRect {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ElemRect")
+            .field("x", &self.point.x)
+            .field("y", &self.point.y)
+            .field("w", &self.size.width())
+            .field("h", &self.size.height())
+            .finish()
+    }
 }
